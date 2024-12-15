@@ -137,10 +137,8 @@
     const points = document.querySelectorAll('.points');
     const pointNameElement = document.getElementById('point-name');
     const progressBar = document.querySelector('.progress-bar');
-    let audio = new Audio();
-    let currentlyPlaying = null;
-    let currentIndex = -1;
     const iframe = document.getElementById('iframe');
+    let currentIndex = -1;
 
     const audioData = [
       { name: "Vipes", audio: "https://thaalam.fm/" },
@@ -173,92 +171,48 @@
       const point = points[index];
       if (!audioData[index].audio) return;
 
-      if (currentIndex === index) {
-        stopAudio();
-      } else {
-        currentIndex = index;
-        points.forEach(p => p.classList.remove('selected'));
-        point.classList.add('selected');
+      currentIndex = index;
+      points.forEach(p => p.classList.remove('selected'));
+      point.classList.add('selected');
 
-        showProgress(index);
+      pointNameElement.textContent = audioData[index].name;
+      pointNameElement.classList.add('fade-in');
+      setTimeout(() => pointNameElement.classList.remove('fade-in'), 600);
 
-        pointNameElement.textContent = audioData[index].name;
-        pointNameElement.classList.add('fade-in');
-        setTimeout(() => pointNameElement.classList.remove('fade-in'), 600);
+      document.title = audioData[index].name;
 
-        document.title = audioData[index].name;
+      // Show progress bar
+      showProgressBar();
 
-        if (currentlyPlaying) {
-          audio.pause();
-        }
-
-        audio.src = audioData[index].audio;
-        audio.play();
-
-        audio.addEventListener('playing', hideProgress);
-
+      // Hide progress bar and show iframe after 2 seconds
+      setTimeout(() => {
+        hideProgressBar();
         iframe.src = audioData[index].audio;
         iframe.style.display = 'block';
-
-        currentlyPlaying = point;
-        updateMediaSession();
-      }
+      }, 2000);
     }
 
-    function stopAudio() {
-      if (currentlyPlaying) {
-        audio.pause();
-        audio.currentTime = 0;
-        currentlyPlaying.classList.remove('selected');
-        currentlyPlaying = null;
-        currentIndex = -1;
-        pointNameElement.textContent = "🔵 CLICK ANY MUSIC POINTS";
-        pointNameElement.classList.add('fade-in');
-        setTimeout(() => pointNameElement.classList.remove('fade-in'), 600);
-        hideProgress();
-        iframe.style.display = 'none';
-      }
-    }
-
-    function showProgress(index) {
-      const angle = (index * 360) / points.length - 90;
+    function showProgressBar() {
+      const angle = (currentIndex * 360) / points.length - 90;
       progressBar.style.width = '80%';
       progressBar.style.transform = `rotate(${angle}deg)`;
     }
 
-    function hideProgress() {
+    function hideProgressBar() {
       progressBar.style.width = '0';
     }
 
-    function updateMediaSession() {
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: audioData[currentIndex]?.name,
-          artwork: [
-            { src: "https://github.com/atsuperman/PLAY/raw/refs/heads/main/file-9vkiZZ9FGePFPoJPonPkoP.webp", sizes: '96x96', type: 'image/webp' }
-          ]
-        });
-
-        navigator.mediaSession.setActionHandler('play', () => selectPoint(currentIndex));
-        navigator.mediaSession.setActionHandler('pause', stopAudio);
-        navigator.mediaSession.setActionHandler('nexttrack', () => selectNextPoint());
-        navigator.mediaSession.setActionHandler('previoustrack', () => selectPreviousPoint());
-      }
-    }
-
-    function selectNextPoint() {
-      let nextIndex = (currentIndex + 1) % audioData.length;
-      if (!audioData[nextIndex].audio) nextIndex = (nextIndex + 1) % audioData.length;
-      selectPoint(nextIndex);
-    }
-
-    function selectPreviousPoint() {
-      let prevIndex = (currentIndex - 1 + audioData.length) % audioData.length;
-      if (!audioData[prevIndex].audio) prevIndex = (prevIndex - 1 + audioData.length) % audioData.length;
-      selectPoint(prevIndex);
+    function stopAudio() {
+      iframe.style.display = 'none';
+      iframe.src = '';
+      points.forEach(p => p.classList.remove('selected'));
+      pointNameElement.textContent = "🔵 CLICK ANY MUSIC POINTS";
+      pointNameElement.classList.add('fade-in');
+      setTimeout(() => pointNameElement.classList.remove('fade-in'), 600);
+      hideProgressBar();
     }
 
     audio.addEventListener('ended', stopAudio);
   </script>
 </body>
-  </html>
+</html>
