@@ -187,6 +187,15 @@
       // Hide progress bar and show iframe after 2 seconds
       setTimeout(() => {
         hideProgressBar();
+        
+        // Get the position of the selected point
+        const pointRect = point.getBoundingClientRect();
+        const circleRect = document.querySelector('.circle-container').getBoundingClientRect();
+        
+        // Calculate iframe position relative to the circle
+        iframe.style.top = `${pointRect.top - circleRect.top - 20}px`; // Adjust for the circle's position
+        iframe.style.left = `${pointRect.left - circleRect.left - 20}px`; // Adjust for the circle's position
+
         iframe.src = audioData[index].audio;
         iframe.style.display = 'block';
       }, 2000);
@@ -215,4 +224,4 @@
     audio.addEventListener('ended', stopAudio);
   </script>
 </body>
-</html>
+  </html>
