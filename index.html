@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Circle Music Player</title>
+  <title>Vertical Gesture Music Player</title>
   <style>
     body {
       margin: 0;
@@ -23,40 +23,29 @@
       border-radius: 50%;
       background: radial-gradient(circle, #ffffff, #d1d1d1);
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-      overflow: hidden;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      overflow: hidden;
     }
 
-    /* Divisions */
+    /* Gesture Divisions */
     .division {
       position: absolute;
-      width: 50%;
-      height: 50%;
-      background: transparent;
+      top: 0;
+      height: 100%;
+      width: 33.33%;
       transition: background 0.3s;
     }
 
     .left {
-      top: 0;
       left: 0;
-      border-top-left-radius: 100%;
+    }
+
+    .center {
+      left: 33.33%;
     }
 
     .right {
-      top: 0;
       right: 0;
-      border-top-right-radius: 100%;
-    }
-
-    .bottom {
-      bottom: 0;
-      left: 25%;
-      width: 50%;
-      height: 50%;
-      border-bottom-left-radius: 50%;
-      border-bottom-right-radius: 50%;
     }
 
     /* Colors */
@@ -75,10 +64,10 @@
 </head>
 <body>
   <div class="circle-container">
-    <!-- Gesture Divisions -->
+    <!-- Vertical Divisions -->
     <div class="division left" id="prev"></div>
+    <div class="division center" id="play-pause"></div>
     <div class="division right" id="next"></div>
-    <div class="division bottom" id="play-pause"></div>
   </div>
 
   <script>
@@ -99,7 +88,7 @@
       next.classList.add('clicked');
     });
 
-    // Bottom Division - Play/Pause
+    // Center Division - Play/Pause
     playPause.addEventListener('click', () => {
       resetColors();
       isPlaying = !isPlaying;
