@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gesture Music Player</title>
+  <title>Circle Music Player</title>
   <style>
     body {
       margin: 0;
@@ -15,24 +15,25 @@
       background: linear-gradient(to bottom, #ffffff, #d1d1d1);
     }
 
+    /* Circle Container */
     .circle-container {
       position: relative;
       width: 300px;
       height: 300px;
       border-radius: 50%;
-      background: radial-gradient(circle, #fff, #ccc);
+      background: radial-gradient(circle, #ffffff, #d1d1d1);
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
       overflow: hidden;
-      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .gesture-area {
+    /* Divisions */
+    .division {
       position: absolute;
-      height: 50%;
       width: 50%;
+      height: 50%;
       background: transparent;
       transition: background 0.3s;
     }
@@ -40,42 +41,44 @@
     .left {
       top: 0;
       left: 0;
-      border-radius: 150px 0 0 150px;
+      border-top-left-radius: 100%;
     }
 
     .right {
       top: 0;
       right: 0;
-      border-radius: 0 150px 150px 0;
+      border-top-right-radius: 100%;
     }
 
     .bottom {
       bottom: 0;
       left: 25%;
-      height: 25%;
       width: 50%;
-      border-radius: 0 0 150px 150px;
+      height: 50%;
+      border-bottom-left-radius: 50%;
+      border-bottom-right-radius: 50%;
     }
 
-    .bottom.playing {
+    /* Colors */
+    .clicked {
+      background: orange;
+    }
+
+    .playing {
       background: green;
     }
 
-    .bottom.paused {
+    .paused {
       background: black;
-    }
-
-    .gesture-area.clicked {
-      background: orange;
     }
   </style>
 </head>
 <body>
   <div class="circle-container">
-    <!-- Gesture Areas -->
-    <div class="gesture-area left" id="prev"></div>
-    <div class="gesture-area right" id="next"></div>
-    <div class="gesture-area bottom" id="play-pause"></div>
+    <!-- Gesture Divisions -->
+    <div class="division left" id="prev"></div>
+    <div class="division right" id="next"></div>
+    <div class="division bottom" id="play-pause"></div>
   </div>
 
   <script>
@@ -84,36 +87,35 @@
     const playPause = document.getElementById('play-pause');
     let isPlaying = false;
 
-    // Left Zone - Previous Gesture
-    prev.addEventListener('mousedown', () => {
+    // Left Division - Previous
+    prev.addEventListener('click', () => {
+      resetColors();
       prev.classList.add('clicked');
     });
-    prev.addEventListener('mouseup', () => {
-      prev.classList.remove('clicked');
-    });
 
-    // Right Zone - Next Gesture
-    next.addEventListener('mousedown', () => {
+    // Right Division - Next
+    next.addEventListener('click', () => {
+      resetColors();
       next.classList.add('clicked');
     });
-    next.addEventListener('mouseup', () => {
-      next.classList.remove('clicked');
-    });
 
-    // Bottom Zone - Play/Pause Gesture
+    // Bottom Division - Play/Pause
     playPause.addEventListener('click', () => {
+      resetColors();
       isPlaying = !isPlaying;
       if (isPlaying) {
         playPause.classList.add('playing');
-        playPause.classList.remove('paused');
       } else {
         playPause.classList.add('paused');
-        playPause.classList.remove('playing');
       }
-      setTimeout(() => {
-        playPause.classList.remove('playing', 'paused');
-      }, 300);
     });
+
+    // Reset Colors
+    function resetColors() {
+      prev.classList.remove('clicked');
+      next.classList.remove('clicked');
+      playPause.classList.remove('playing', 'paused');
+    }
   </script>
 </body>
 </html>
