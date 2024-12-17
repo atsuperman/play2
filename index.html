@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simple Circle</title>
+  <title>Music Player Circle</title>
   <style>
     body {
       margin: 0;
@@ -16,15 +16,79 @@
     }
 
     .circle-container {
+      position: relative;
       width: 300px;
       height: 300px;
       border-radius: 50%;
       background: radial-gradient(circle, #fff, #ccc);
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .division {
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      top: 0;
+    }
+
+    .left {
+      left: 0;
+      background: transparent;
+      transition: background 0.3s;
+    }
+
+    .right {
+      right: 0;
+      background: transparent;
+      transition: background 0.3s;
+    }
+
+    .center {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      top: 25%;
+      left: 25%;
+      border-radius: 50%;
+      background: transparent;
+      transition: background 0.3s;
+      z-index: 1;
     }
   </style>
 </head>
 <body>
-  <div class="circle-container"></div>
+  <div class="circle-container" id="circle">
+    <div class="division left" id="prev"></div>
+    <div class="division right" id="next"></div>
+    <div class="center" id="play-pause"></div>
+  </div>
+
+  <script>
+    const prev = document.getElementById('prev');
+    const next = document.getElementById('next');
+    const playPause = document.getElementById('play-pause');
+    let isPlaying = false;
+
+    prev.addEventListener('click', () => {
+      prev.style.background = "orange";
+      setTimeout(() => prev.style.background = "transparent", 300);
+    });
+
+    next.addEventListener('click', () => {
+      next.style.background = "orange";
+      setTimeout(() => next.style.background = "transparent", 300);
+    });
+
+    playPause.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      playPause.style.background = isPlaying ? "green" : "black";
+      setTimeout(() => playPause.style.background = "transparent", 300);
+    });
+  </script>
 </body>
 </html>
