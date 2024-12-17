@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vertical Gesture Music Player</title>
+  <title>Circle Music Player</title>
   <style>
     body {
       margin: 0;
@@ -13,6 +13,7 @@
       justify-content: center;
       height: 100vh;
       background: linear-gradient(to bottom, #ffffff, #d1d1d1);
+      font-family: Arial, sans-serif;
     }
 
     /* Circle Container */
@@ -24,6 +25,11 @@
       background: radial-gradient(circle, #ffffff, #d1d1d1);
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
       display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
       overflow: hidden;
     }
 
@@ -33,7 +39,7 @@
       top: 0;
       height: 100%;
       width: 33.33%;
-      transition: background 0.3s;
+      transition: background 0.5s ease-in-out;
     }
 
     .left {
@@ -60,50 +66,123 @@
     .paused {
       background: black;
     }
+
+    /* File Name Display */
+    #file-name {
+      position: absolute;
+      color: #333;
+      word-wrap: break-word;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
-  <div class="circle-container">
+  <div class="circle-container" id="circle">
     <!-- Vertical Divisions -->
     <div class="division left" id="prev"></div>
     <div class="division center" id="play-pause"></div>
     <div class="division right" id="next"></div>
+    <div id="file-name">No Track</div>
   </div>
 
   <script>
+    // Audio Files
+    const audioFiles = [
+      "https://github.com/atsuperman/play2/raw/refs/heads/main/Achacho.mp3",
+      "https://github.com/atsuperman/play2/raw/refs/heads/main/DIVINE%20-%20Triple%20OG%20_%20Prod.%20by%20Phenom%20_%20Official%20Music%20Video(MP3_320K).mp3"
+    ];
+
+    let currentIndex = 0;
+    let isPlaying = false;
+    const audio = new Audio();
     const prev = document.getElementById('prev');
     const next = document.getElementById('next');
     const playPause = document.getElementById('play-pause');
-    let isPlaying = false;
+    const fileNameDisplay = document.getElementById('file-name');
+
+    // Initial Track Setup
+    updateFileName();
 
     // Left Division - Previous
     prev.addEventListener('click', () => {
       resetColors();
       prev.classList.add('clicked');
+      playPrevious();
+      autoHideColors();
     });
 
     // Right Division - Next
     next.addEventListener('click', () => {
       resetColors();
       next.classList.add('clicked');
+      playNext();
+      autoHideColors();
     });
 
     // Center Division - Play/Pause
     playPause.addEventListener('click', () => {
       resetColors();
-      isPlaying = !isPlaying;
-      if (isPlaying) {
-        playPause.classList.add('playing');
-      } else {
-        playPause.classList.add('paused');
-      }
+      togglePlayPause();
+      autoHideColors();
     });
+
+    // Play/Pause Function
+    function togglePlayPause() {
+      if (isPlaying) {
+        audio.pause();
+        playPause.classList.add('paused');
+        isPlaying = false;
+      } else {
+        audio.src = audioFiles[currentIndex];
+        audio.play();
+        playPause.classList.add('playing');
+        isPlaying = true;
+        updateFileName();
+      }
+    }
+
+    // Play Next Track
+    function playNext() {
+      currentIndex = (currentIndex + 1) % audioFiles.length;
+      startPlaying();
+    }
+
+    // Play Previous Track
+    function playPrevious() {
+      currentIndex = (currentIndex - 1 + audioFiles.length) % audioFiles.length;
+      startPlaying();
+    }
+
+    // Start Playing Track
+    function startPlaying() {
+      audio.src = audioFiles[currentIndex];
+      audio.play();
+      isPlaying = true;
+      resetColors();
+      playPause.classList.add('playing');
+      updateFileName();
+    }
+
+    // Update File Name Display
+    function updateFileName() {
+      const fileName = decodeURIComponent(audioFiles[currentIndex])
+        .split('/').pop()
+        .replace(/\.[^/.]+$/, ''); // Remove extension
+      fileNameDisplay.textContent = fileName;
+    }
 
     // Reset Colors
     function resetColors() {
       prev.classList.remove('clicked');
       next.classList.remove('clicked');
       playPause.classList.remove('playing', 'paused');
+    }
+
+    // Auto Hide Colors
+    function autoHideColors() {
+      setTimeout(() => resetColors(), 1000);
     }
   </script>
 </body>
