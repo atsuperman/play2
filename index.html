@@ -84,26 +84,21 @@
     <div class="division left" id="prev"></div>
     <div class="division center" id="play-pause"></div>
     <div class="division right" id="next"></div>
-    <div id="file-name">No Track</div>
+    <div id="file-name"></div>
   </div>
 
+  <script src="audio-files.js"></script>
   <script>
-    // Audio Files
-    const audioFiles = [
-      "https://github.com/atsuperman/play2/raw/refs/heads/main/Achacho.mp3",
-      "https://github.com/atsuperman/play2/raw/refs/heads/main/DIVINE%20-%20Triple%20OG%20_%20Prod.%20by%20Phenom%20_%20Official%20Music%20Video(MP3_320K).mp3"
-    ];
-
-    let currentIndex = 0;
+    let currentIndex = Math.floor(Math.random() * audioFiles.length);
     let isPlaying = false;
-    const audio = new Audio();
+    const audio = new Audio(audioFiles[currentIndex]);
     const prev = document.getElementById('prev');
     const next = document.getElementById('next');
     const playPause = document.getElementById('play-pause');
     const fileNameDisplay = document.getElementById('file-name');
 
-    // Initial Track Setup
-    updateFileName();
+    // Initialize Player
+    updateFileName("");
 
     // Left Division - Previous
     prev.addEventListener('click', () => {
@@ -134,12 +129,12 @@
         audio.pause();
         playPause.classList.add('paused');
         isPlaying = false;
+        updateFileName("");
       } else {
-        audio.src = audioFiles[currentIndex];
         audio.play();
         playPause.classList.add('playing');
         isPlaying = true;
-        updateFileName();
+        updateFileName(decodeURIComponent(audio.src).split('/').pop().replace(/\.[^/.]+$/, ''));
       }
     }
 
@@ -162,15 +157,17 @@
       isPlaying = true;
       resetColors();
       playPause.classList.add('playing');
-      updateFileName();
+      updateFileName(decodeURIComponent(audio.src).split('/').pop().replace(/\.[^/.]+$/, ''));
     }
 
+    // Auto Next Track on End
+    audio.addEventListener('ended', () => {
+      playNext();
+    });
+
     // Update File Name Display
-    function updateFileName() {
-      const fileName = decodeURIComponent(audioFiles[currentIndex])
-        .split('/').pop()
-        .replace(/\.[^/.]+$/, ''); // Remove extension
-      fileNameDisplay.textContent = fileName;
+    function updateFileName(name) {
+      fileNameDisplay.textContent = name || "No Track Playing";
     }
 
     // Reset Colors
