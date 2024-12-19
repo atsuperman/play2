@@ -33,26 +33,25 @@
     /* Division Styles */
     .division {
       position: absolute;
-      width: 100%;
+      width: 33.33%;
       height: 100%;
-      clip-path: polygon(0 0, 100% 0, 100% 100%);
-      transform-origin: center;
+      top: 0;
       transition: background 0.3s ease;
     }
 
     .left {
-      clip-path: polygon(0 0, 50% 50%, 0 100%);
+      left: 0;
     }
 
     .center {
-      clip-path: polygon(0 0, 100% 0, 50% 50%, 100% 100%, 0 100%);
+      left: 33.33%;
     }
 
     .right {
-      clip-path: polygon(100% 0, 100% 100%, 50% 50%);
+      left: 66.66%;
     }
 
-    /* Colors on Click */
+    /* Clicked Colors */
     .clicked-prev {
       background: orange !important;
     }
