@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Audio Player with Song Name</title>
+  <title>Audio Player with Clean File Name</title>
   <style>
     body {
       margin: 0;
@@ -152,7 +152,7 @@
           }
           break;
       }
-      updateSongName();
+      setTimeout(updateSongName, 1000); // Show song name after 1 second
       autoHideColors();
     }
 
@@ -193,7 +193,10 @@
     function updateSongName() {
       if (isPlaying) {
         const fileName = audio.src.split('/').pop().split('?')[0];
-        songName.textContent = fileName || "";
+        const cleanName = fileName
+          .replace(/\.mp3$/i, '') // Remove the file extension
+          .replace(/[^a-zA-Z\s]/g, ''); // Remove special characters, numbers, and symbols
+        songName.textContent = cleanName || "";
       } else {
         songName.textContent = "";
       }
