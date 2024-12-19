@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Circle Music Player</title>
+  <title>Gesture Circle Music Player</title>
   <style>
     body {
       margin: 0;
@@ -27,64 +27,57 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      font-weight: bold;
-      font-size: 16px;
       overflow: hidden;
     }
 
-    /* Gesture Divisions */
+    /* Division Styles */
     .division {
       position: absolute;
-      top: 0;
+      width: 100%;
       height: 100%;
-      width: 33.33%;
-      transition: background 0.5s ease-in-out;
+      clip-path: polygon(0 0, 50% 50%, 0 100%);
+      transform-origin: center;
+      transition: background 0.3s ease;
     }
 
     .left {
-      left: 0;
+      background: transparent;
+      transform: rotate(-90deg);
     }
 
     .center {
-      left: 33.33%;
+      background: transparent;
+      clip-path: polygon(0 0, 100% 0, 50% 50%, 100% 100%, 0 100%);
     }
 
     .right {
-      right: 0;
+      background: transparent;
+      transform: rotate(90deg);
     }
 
-    /* Colors */
-    .clicked {
-      background: orange;
+    /* Colors on Click */
+    .clicked-prev {
+      background: orange !important;
     }
 
-    .playing {
-      background: green;
+    .clicked-next {
+      background: orange !important;
     }
 
-    .paused {
-      background: black;
+    .clicked-play {
+      background: green !important;
     }
 
-    /* File Name Display */
-    #file-name {
-      position: absolute;
-      color: #333;
-      word-wrap: break-word;
-      text-align: center;
-      padding: 10px;
-      font-size: 14px;
+    .clicked-pause {
+      background: black !important;
     }
   </style>
 </head>
 <body>
-  <div class="circle-container" id="circle">
-    <!-- Vertical Divisions -->
+  <div class="circle-container">
     <div class="division left" id="prev"></div>
     <div class="division center" id="play-pause"></div>
     <div class="division right" id="next"></div>
-    <div id="file-name"></div>
   </div>
 
   <script src="audio-files.js"></script>
@@ -92,95 +85,73 @@
     let currentIndex = Math.floor(Math.random() * audioFiles.length);
     let isPlaying = false;
     const audio = new Audio(audioFiles[currentIndex]);
+
     const prev = document.getElementById('prev');
     const next = document.getElementById('next');
     const playPause = document.getElementById('play-pause');
-    const fileNameDisplay = document.getElementById('file-name');
 
-    // Initialize Player
-    updateFileName("");
+    // Add Touch Listeners
+    prev.addEventListener('click', () => handleGesture('prev'));
+    next.addEventListener('click', () => handleGesture('next'));
+    playPause.addEventListener('click', () => handleGesture('play-pause'));
 
-    // Left Division - Previous
-    prev.addEventListener('click', () => {
+    // Handle Gestures
+    function handleGesture(action) {
       resetColors();
-      prev.classList.add('clicked');
-      playPrevious();
-      autoHideColors();
-    });
-
-    // Right Division - Next
-    next.addEventListener('click', () => {
-      resetColors();
-      next.classList.add('clicked');
-      playNext();
-      autoHideColors();
-    });
-
-    // Center Division - Play/Pause
-    playPause.addEventListener('click', () => {
-      resetColors();
-      togglePlayPause();
-      autoHideColors();
-    });
-
-    // Play/Pause Function
-    function togglePlayPause() {
-      if (isPlaying) {
-        audio.pause();
-        playPause.classList.add('paused');
-        isPlaying = false;
-        updateFileName("");
-      } else {
-        audio.play();
-        playPause.classList.add('playing');
-        isPlaying = true;
-        updateFileName(decodeURIComponent(audio.src).split('/').pop().replace(/\.[^/.]+$/, ''));
+      switch (action) {
+        case 'prev':
+          prev.classList.add('clicked-prev');
+          playPrevious();
+          break;
+        case 'next':
+          next.classList.add('clicked-next');
+          playNext();
+          break;
+        case 'play-pause':
+          if (isPlaying) {
+            playPause.classList.add('clicked-pause');
+            audio.pause();
+            isPlaying = false;
+          } else {
+            playPause.classList.add('clicked-play');
+            audio.play();
+            isPlaying = true;
+          }
+          break;
       }
+      autoHideColors();
     }
 
     // Play Next Track
     function playNext() {
       currentIndex = (currentIndex + 1) % audioFiles.length;
-      startPlaying();
+      audio.src = audioFiles[currentIndex];
+      if (isPlaying) audio.play();
     }
 
     // Play Previous Track
     function playPrevious() {
       currentIndex = (currentIndex - 1 + audioFiles.length) % audioFiles.length;
-      startPlaying();
-    }
-
-    // Start Playing Track
-    function startPlaying() {
       audio.src = audioFiles[currentIndex];
-      audio.play();
-      isPlaying = true;
-      resetColors();
-      playPause.classList.add('playing');
-      updateFileName(decodeURIComponent(audio.src).split('/').pop().replace(/\.[^/.]+$/, ''));
-    }
-
-    // Auto Next Track on End
-    audio.addEventListener('ended', () => {
-      playNext();
-    });
-
-    // Update File Name Display
-    function updateFileName(name) {
-      fileNameDisplay.textContent = name || "No Track Playing";
+      if (isPlaying) audio.play();
     }
 
     // Reset Colors
     function resetColors() {
-      prev.classList.remove('clicked');
-      next.classList.remove('clicked');
-      playPause.classList.remove('playing', 'paused');
+      prev.classList.remove('clicked-prev');
+      next.classList.remove('clicked-next');
+      playPause.classList.remove('clicked-play', 'clicked-pause');
     }
 
     // Auto Hide Colors
     function autoHideColors() {
       setTimeout(() => resetColors(), 1000);
     }
+
+    // Auto Next on End
+    audio.addEventListener('ended', () => {
+      playNext();
+    });
   </script>
 </body>
 </html>
