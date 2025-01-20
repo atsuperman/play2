@@ -370,13 +370,15 @@
     style="width: 100%; padding: 5px; margin-bottom: 10px; border: 1px solid #55CC96;"
   />
   <span>QUEUE </span>
-  <ul id="song-list"></ul></div>
+  <ul id="song-list"></ul>
+</div>
   <div class="link-container">
     <a href="https://fb.com/atSUPERMAN" target="_blank" class="link">ⓕ atSUPERMAN</a>
     <div class="note-container"> </div> 
 </div>
   <script src="song.js"></script> 
 <script>
+ 
   let audio = new Audio();
   let currentSongIndex = 0;
   let isPlaying = false;
@@ -412,6 +414,9 @@ audio.addEventListener('ended', () => {
     linkContainer.style.display = 'none'; 
   }
 });
+
+
+
       
     // Floating musical notes
 function createNote() {
@@ -435,6 +440,11 @@ function randomNote() {
 }
 
 setInterval(createNote, 1000);
+    
+  
+  
+  
+ // Inside your existing <script> tag
 // Function to format time as "00:00"
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
@@ -503,6 +513,9 @@ if ('mediaSession' in navigator) {
         artist: 'Unknown' 
     }); 
 }
+
+  
+  
   function loadNextSong() {
     if (songQueue.length === 0) {
         shuffleSongs();
