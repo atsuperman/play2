@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Audio Player</title>
+  <title>AUDIO PLAYER</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Poppins', sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -17,6 +17,60 @@
       overflow: hidden;
     }
 
+           
+ .link-container {
+    position: relative; /* Make link-container the relative container */
+    text-align: center;
+    padding: 2px;
+    margin-top: 10vh; 
+    margin-bottom: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .link {
+    font-size: 1em;
+    font-weight: bold;
+    color: black;
+    text-decoration: none;
+    text-shadow: 0 0 5px black;
+    animation: glow 2s infinite;
+}
+  
+ @keyframes glow {
+    0%, 100% {
+        text-shadow: 0 0 5px black;
+    }
+    50% {
+        text-shadow: 0 0 15px black;
+    }
+} 
+  
+  
+  .note { 
+    position: absolute; 
+    bottom: 0; /* Start at the bottom of the container */
+    left: 50%; /* Center horizontally */
+    transform: translateX(50%); /* Adjust for center positioning */
+    font-size: 1.5em;
+    color: silver;
+    opacity: 0;
+    animation: floatUp 3s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-200px) scale(0.5);
+        opacity: 0;
+    }
+}
+
+  
     .vertical-line {
       position: absolute;
       left: 2%;
@@ -41,54 +95,34 @@
     .prompt-container {
       background-color: #1e1e1e;
       color: #33ff33;
-      font-family: monospace;
+      font-family: 'Poppins', sans-serif;
       text-shadow: 0 0 5px #33ff33, 0 0 10px #00ff00, 0 0 20px #00ff00;
     }
 
+  #song-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+}
+
+#song-list li {
+  margin-bottom: 8px;
+  color: #191970;
+}
+  
+  
     .b-container {
       background-color: white;
       color: black;
       text-align: center;
       font-size: 1.2rem;
       position: relative;
-      display: flex;
-      justify-content: center;
-      padding: 10px;
+      display: none; /* Initially hide the b-container */
       flex-direction: column;
-    }
-
-    .search-box {
-      width: 90%;
       padding: 10px;
-      font-size: 1rem;
-      border: 1px solid #555;
-      border-radius: 5px;
-      margin-bottom: 10px;
-      text-align: left;
-    }
-
-    .search-box::placeholder {
-      color: #888;
-    }
-
-    .search-results {
-      width: 90%;
-      margin-top: 10px;
-      padding: 10px;
-      background-color: #f1f1f1;
-      border-radius: 5px;
-      max-height: 200px;
-      overflow-y: auto;
-      text-align: left;
-    }
-
-    .search-result-item {
-      padding: 5px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .search-result-item:last-child {
-      border-bottom: none;
     }
 
 
@@ -96,7 +130,7 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      background-color: white;
+      background-color: #F0FFFF;
       padding: 10px;
       border-radius: 5px;
       margin-bottom: 10px;
@@ -107,7 +141,98 @@
       color: black;
       cursor: pointer;
     }
+  
+/* Progress Display Container */
+#progress-line {
+  width: 100%;
+  height: 30px; /* Height of the progress bar */
+  background-color: yellow; /* Background color of the progress bar */
+  border-radius: 1px;
+  position: relative; /* So the text is centered inside */
+  margin-top: 10px;
+}
 
+/* Enhanced Progress Text Display */
+#progress-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Arial', sans-serif;
+  font-size: 11px;
+  color: #fff;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 2;
+
+  /* Adjust to fit container */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden; /* Prevents text from overflowing */
+  text-overflow: ellipsis; /* Displays ellipsis if text overflows */
+  max-width: 95%; /* Ensures text stays within the container width */
+  word-break: break-word; /* Breaks words if necessary to fit */
+  line-height: 1.2; /* Adjusts text spacing for readability */
+  box-sizing: border-box; /* Includes padding in width calculations */
+  padding: 2px 4px; /* Adds padding to the text for better spacing */
+}
+
+/* Scale down text if it overflows */
+#progress-display:after {
+  content: attr(data-text); /* Displays the actual text from an attribute */
+  visibility: hidden; /* Hidden content used to measure actual size */
+  white-space: nowrap; /* Keeps text in a single line */
+  font-size: inherit;
+}
+
+#progress-display.scaled {
+  font-size: calc(10px + 0.3vw); /* Dynamically adjusts size */
+}
+
+/* Progress Color Inside the Display */
+#progress-line {
+  background: linear-gradient(to right, 
+    #4B0082 0%,           /* Rich velvet blue */
+    #4B0082 var(--progress, 0%), 
+    #000000 var(--progress, 0%),  /* Black */
+    #000000 100%);         /* Black color */
+}
+  
+
+@keyframes scroll-text {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Optional: Add styling to the container */
+.prompt-container {
+  padding: 20px;
+  background-color: #1e1e1e;
+  color: #33ff33;
+  font-family: monospace;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.5), 5px -5px 15px rgba(50, 255, 50, 0.2);
+}
+  
+  .song-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    display: none;
+}
+  
     .prompt-text {
       display: flex;
       flex-direction: column;
@@ -123,56 +248,76 @@
       color: blue;
     }
 
-    .movie-line {
-      display: flex;
-      align-items: center;
-    }
-
-    .movie-line .movie-icon {
-      font-size: 0.8rem;
+    .prompt-text .movie-icon {
+      margin-right: 10px;
+      font-size: 1.2rem;
       color: blue;
-      margin-right: 5px;
     }
 
-    .choose-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 10px;
-      background-color: #333;
-      padding: 5px;
-      border-radius: 5px;
-    }
+  
+  /* Additional styles to ensure the search box stays on top */
+  #search-box {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #555;
+    margin-top: 0; /* Remove top margin to align with the container */
+  }
 
-    .choose-container select {
-      background-color: #333;
-      color: #33ff33;
-      border: 2px solid #555;
-      padding: 5px;
-      font-size: 1rem;
-      cursor: pointer;
-      border-radius: 5px;
-    }
+  #song-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
 
-    @media screen and (max-width: 768px) {
-      .prompt-container, .b-container {
-        width: 90%;
-        max-width: none;
-        font-size: 0.9rem;
-      }
+  /* New styles for search results */
+  #search-results {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    border-bottom: 1px solid #ccc;
+  }
 
-      .icon-row .icon {
-        font-size: 1.2rem;
-      }
+  #search-results li {
+    cursor: pointer;
+    padding: 5px;
+    background-color: #DAF7A6;
+    margin-bottom: 5px;
+  }
 
-      .prompt-text {
-        font-size: 1rem;
-      }
+  #search-results li:hover {
+    background-color: #e1e1e1;
+  }
+  
+  
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+  @media screen and (max-width: 768px) {
+  /* Target the specific element containing the lengthy text (e.g., .prompt-text) */
+  .prompt-text {
+    /* Adjust font size for smaller screens */
+    font-size: 0.9rem; 
 
-      .b-container {
-        font-size: 1rem;
-      }
-    }
+    /* Enable text wrapping */
+    word-wrap: break-word; 
+
+    /* Optional: Add more space for better readability */
+    line-height: 1.5; 
+  }
+}
+
   </style>
 </head>
 <body>
@@ -180,177 +325,363 @@
 <div class="vertical-line"></div>
 
 <div class="prompt-container">
-  <div id="current-time" class="current-time"></div>
-  <div class="choose-container">
-    <select id="playlist-select">
-      <option value="all">All</option>
-       <option value="hits"> + CUSTOM</option>
-      <option value="melody">Melody</option>
-      <option value="hits">Hits</option>
- 
-    </select>
+  <div class="audio-player">   
   </div>
 
   <div class="icon-row">
-    <span class="icon" id="prev">&#9668;</span>
-    <span class="icon" id="play-pause">&#9654;</span>
-    <span class="icon" id="next">&#9658;</span>
+     <span class="icon" id="play-pause">
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <path id="play-path" d="M8 5v14l11-7z" /> 
+          <path id="pause-path" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" style="display: none;" />
+        </svg>
+      </span>
+      <span class="icon" id="next">
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <path d="M10 6l6 6-6 6z" />
+        </svg>
+      </span>
   </div>
+  
+  <div id="progress-line">
+    <span id="progress-display">_</span>
+    <div id="song-info" class="song-info"></div>
+  </div>
+  
   <div class="prompt-text" id="current-song">
-    <div><span class="play-icon">&#9654;</span> <span id="song-name">No song is playing</span></div>
-    <div class="movie-line">
-      <span class="movie-icon">🎬</span>
-      <span id="movie-name">Movie Unknown</span>
-    </div>
+    <div style="display: flex; align-items: center;"> 
+    <span class="play-icon">&#9654;</span>
+    <span id="song-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">No song is playing</span>
   </div>
+    <div style="display: flex; align-items: center;"> 
+    <span class="movie-icon">🎬 </span>
+    <span id="movie-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Movie Unknown</span>
+  </div> 
+     <button id="toggle-list" style="margin-TOP: 10px; padding: 3px 15px; border: red; background-color: #1280D4; color: velvet; cursor: pointer;">LIST ▼</button>
+  </div>
+  
 </div>
 <div class="b-container">
-  <!-- This is where search results will be displayed -->
-  <div class="search-results" id="search-results"></div>
-
-  <!-- Search Box -->
-  <input type="text" id="search-box" class="search-box" placeholder=" + Search & Add Song " />
-</div> 
+   <ul id="search-results"></ul>
+   <!-- Add a search input box -->
+  <input 
+    type="text" 
+    id="search-box" 
+    placeholder="+ Search & Add Tracks" 
+    style="width: 100%; padding: 5px; margin-bottom: 10px; border: 1px solid #55CC96;"
+  />
+  <span>QUEUE </span>
+  <ul id="song-list"></ul>
+</div>
+  <div class="link-container">
+    <a href="https://fb.com/atSUPERMAN" target="_blank" class="link">ⓕ atSUPERMAN</a>
+    <div class="note-container"> </div> 
+</div>
 <script>
-  // Define all the available songs
   const songs = [
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Achacho.mp3", name: "Achacho", movie: "Aranmanai 3", key: ["All", "melody"] },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Chillanjirukkiye.mp3", name: "Chillanjirukkiye", movie: "Chilla Exam", key: ["All", "melody"] },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/DIVINE.mp3", name: "Divine", movie: "Unknown", key: ["All", "melody" , "hits"] },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Edho%20Solla.mp3", name: "Edho Solla", movie: "Ugugu", key: ["All", "hits"] },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Hey_Minnale.mp3", name: "Hey Minnale", movie: "Amaran", key: ["All", "hits"] },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Naa_Ready.mp3", name: "Naa Ready", movie: "Beeea", key: ["All", "melody" , "hits"] },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Nee_Pottu_Vacha.mp3", name: "Nee Pottu Vacha", movie: "Vijay", key: ["All", "melody"] },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Peelings.mp3", name: "Peelings", movie: "Pushpa 2", key: ["All", "hits"] },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Poothathu_Poonthoppu.mp3", name: "Poothathu", movie: "Unknown", key: ["All", "hits"] },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Sawadeeka.dev.mp3", name: "Sawedeeka", movie: "Unknown", key: ["All", "melody"] }
+    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Achacho.mp3", name: "Achacho", movie: "Aranmanai 3" },
+    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Chillanjirukkiye.mp3", name: "Chillanjirukkiye", movie: "Chilla jslslsljdhdhdhdhhdjdjdn Exam" },
+    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/DIVINE.mp3", name: "Divine", movie: "Unknown" },
+    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Edho%20Solla.mp3", name: "Edho Solla", movie: "Ugugu" },
+    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Hey_Minnale.mp3", name: "Hey Minnale", movie: "Amaran" },
+    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Naa_Ready.mp3", name: "Naa Ready", movie: "Beeea" },
+    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Nee_Pottu_Vacha.mp3", name: "Nee Pottu Vacha", movie: "Vijay" },
+    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Peelings.mp3", name: "Peelings", movie: "Pushpa 2" },
+    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Poothathu_Poonthoppu.mp3", name: "Poothathu", movie: "Unknown" },
+    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Sawadeeka.dev.mp3", name: "Sawedeeka", movie: "Unknown" }
   ];
 
-  let currentIndex = 0;
+
+  let audio = new Audio();
+  let currentSongIndex = 0;
   let isPlaying = false;
-  let currentSongs = [];
-  let shuffledSongs = [];
-  const audio = new Audio();
-  const playPauseIcon = document.getElementById("play-pause");
+  let shuffleOrder = [];
+  let songQueue = [];
+let linkContainer = document.querySelector('.link-container');
+let showTimeout, hideTimeout;
 
-  // Function to shuffle the playlist
-  function shuffleArray(arr) {
-    let shuffled = arr.slice();
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+linkContainer.style.display = 'none'; // Initially hide the link container
+
+audio.addEventListener('play', () => {
+  // Reset timeouts when playback starts
+  clearTimeout(showTimeout);
+  clearTimeout(hideTimeout);
+
+  // Start the logic after playback begins
+  audio.addEventListener('timeupdate', () => {
+    if (audio.currentTime >= 60 && !showTimeout) { 
+      showTimeout = setTimeout(() => {
+        linkContainer.style.display = 'flex';
+        hideTimeout = setTimeout(() => {
+          linkContainer.style.display = 'none';
+        }, 30000); // Hide after 30 seconds (1 minute 30 seconds total)
+      }, 10); // Slight delay for smoother display
     }
-    return shuffled;
+  });
+});
+
+audio.addEventListener('ended', () => {
+  if (showTimeout) {
+    clearTimeout(showTimeout);
+    clearTimeout(hideTimeout); 
+    linkContainer.style.display = 'none'; 
   }
+});
 
-  // Function to update song details in the UI
-  function updateSongDetails() {
-    const song = currentSongs[currentIndex];
-    document.getElementById("song-name").textContent = song.name;
-    document.getElementById("movie-name").textContent = song.movie || "Movie Unknown";
-  }
 
-// Function to play a song
-function playSong(index) {
-  if (currentSongs.length === 0) return;  // Prevent playing if no songs are available
 
-  const song = currentSongs[index];
-  audio.src = song.url;
-  audio.load();
-  audio.play();
-  isPlaying = true;
-  playPauseIcon.innerHTML = "&#10073;&#10073;";  // Pause icon
-  updateSongDetails();
+      
+    // Floating musical notes
+function createNote() {
+    const container = document.querySelector('.link-container'); // Attach to link-container
+    const note = document.createElement('div');
+    note.classList.add('note');
+    note.textContent = randomNote();
+
+    const randomX = Math.random() * (container.offsetWidth - 20);
+    note.style.left = `${randomX}px`;
+    note.style.bottom = `10px`;
+
+    container.appendChild(note);
+
+    setTimeout(() => note.remove(), 3000);
 }
 
-  // Toggle play/pause
-  function togglePlayPause() {
+function randomNote() {
+    const notes = ['♪', '♫', '♬', '♩'];
+    return notes[Math.floor(Math.random() * notes.length)];
+}
+
+setInterval(createNote, 1000);
+    
+  
+  
+  
+ // Inside your existing <script> tag
+// Function to format time as "00:00"
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secondsLeft = Math.floor(seconds % 60);
+  return `${String(minutes).padStart(2, '0')}:${String(secondsLeft).padStart(2, '0')}`;
+}
+  
+// Update the progress bar and additional information when the song is playing
+audio.addEventListener('timeupdate', () => {
+  const progressLine = document.getElementById('progress-line');
+  const progressDisplay = document.getElementById('progress-display');
+
+  if (audio.duration) {
+    const progress = (audio.currentTime / audio.duration) * 100;
+    progressLine.style.setProperty('--progress', `${progress}%`);
+
+    const currentFormattedTime = formatTime(audio.currentTime);
+    const durationFormattedTime = formatTime(audio.duration);
+
+    // Calculate remaining time
+    const remainingTime = audio.duration - audio.currentTime;
+
+    // Case 1: 1:03 to 0:53 remaining (Display song name)
+    if (remainingTime <= 63 && remainingTime > 53) {
+      const nextSongIndex = songQueue.length > 0 ? songQueue[0] : (currentSongIndex + 1) % songs.length;
+      const nextSong = songs[nextSongIndex];
+      progressDisplay.textContent = `Coming Up Next: ${nextSong.name}`;
+    }
+
+    // Case 2: 0:54 to 0:44 remaining (Display movie name)
+    else if (remainingTime <= 54 && remainingTime > 44) {
+      const nextSongIndex = songQueue.length > 0 ? songQueue[0] : (currentSongIndex + 1) % songs.length;
+      const nextSong = songs[nextSongIndex];
+      progressDisplay.textContent = `From: ${nextSong.movie}`;
+    }
+
+    // Case 3: 0:45 and beyond (Revert to duration display)
+    else if (remainingTime <= 45) {
+      progressDisplay.textContent = `${currentFormattedTime} / ${durationFormattedTime}`;
+    }
+
+    // Default: Show duration before 1:03
+    else {
+      progressDisplay.textContent = `${currentFormattedTime} / ${durationFormattedTime}`;
+    }
+  }
+});
+  
+  const toggleListButton = document.getElementById('toggle-list');
+  const bContainer = document.querySelector('.b-container');
+  const searchResults = document.getElementById('search-results');
+
+  toggleListButton.addEventListener('click', () => {
+    bContainer.style.display = bContainer.style.display === 'none' || bContainer.style.display === '' ? 'flex' : 'none';
+  });
+
+  function shuffleSongs() {
+    shuffleOrder = [...Array(songs.length)].map((_, i) => i).sort(() => Math.random() - 0.5);
+    songQueue = [...shuffleOrder];
+  }
+
+  // Create MediaSession object
+if ('mediaSession' in navigator) { 
+    navigator.mediaSession.metadata = new MediaMetadata({
+        title: 'No song is playing', 
+        artist: 'Unknown' 
+    }); 
+}
+
+  
+  
+  function loadNextSong() {
+    if (songQueue.length === 0) {
+        shuffleSongs();
+    }
+    currentSongIndex = songQueue.shift();
+    const currentSong = songs[currentSongIndex];
+    audio.src = currentSong.url;
+    updateSongInfo(currentSong);
+
+    // Update MediaSession metadata
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: currentSong.name, 
+            artist: currentSong.movie 
+        });
+    }
+
+    audio.play();
+    updateSongList(); 
+}
+
+  function updateSongInfo(song) {
+    document.getElementById('song-name').textContent = song.name;
+    document.getElementById('movie-name').textContent = song.movie;
+  }
+
+ // Handle playback controls
+if ('mediaSession' in navigator) {
+    navigator.mediaSession.setActionHandler('play', () => {
+        audio.play();
+        isPlaying = true;
+        // Update UI accordingly (e.g., button states)
+        document.getElementById('play-path').style.display = 'none';
+        document.getElementById('pause-path').style.display = 'block'; 
+    });
+
+    navigator.mediaSession.setActionHandler('pause', () => {
+        audio.pause();
+        isPlaying = false;
+        // Update UI accordingly (e.g., button states)
+        document.getElementById('play-path').style.display = 'block';
+        document.getElementById('pause-path').style.display = 'none'; 
+    });
+
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+        if (isPlaying) {
+            audio.pause();
+            isPlaying = false;
+            document.getElementById('play-path').style.display = 'block';
+            document.getElementById('pause-path').style.display = 'none'; 
+        }
+        loadNextSong();
+        // Update UI accordingly (e.g., button states)
+    });
+} 
+  
+  // Inside your <script> tag, replace the old updateSongList function with the new one:
+function updateSongList() {
+  const songList = document.getElementById('song-list');
+  songList.innerHTML = ''; // Clear the existing list
+  for (let i = 0; i < Math.min(5, songQueue.length); i++) {
+    const songIndex = songQueue[i];
+    const song = songs[songIndex];
+    const listItem = document.createElement('li');
+    
+    // Create the song name and movie info
+    listItem.innerHTML = `<strong>${song.name}</strong> - <em>${song.movie}</em>`;
+
+    // Create the red "-" button
+    const removeButton = document.createElement('button');
+    removeButton.textContent = "➖";
+    removeButton.style.backgroundColor = "orange";
+    removeButton.style.color = "red";
+    removeButton.style.border = "blue";
+    removeButton.style.padding = "1px 5px";
+    removeButton.style.cursor = "pointer";
+    removeButton.style.marginLeft = "20px";
+
+    // Add the button to the list item
+    listItem.appendChild(removeButton);
+
+    // Event listener to remove the song when the "-" button is clicked
+    removeButton.addEventListener('click', () => {
+      songQueue.splice(i, 1); // Remove the song from the queue
+      updateSongList(); // Update the displayed list
+    });
+
+    // Append the list item to the song list
+    songList.appendChild(listItem);
+  }
+}
+
+  document.getElementById('play-pause').addEventListener('click', () => {
     if (isPlaying) {
       audio.pause();
       isPlaying = false;
-      playPauseIcon.innerHTML = "&#9654;";  // Play icon
+      document.getElementById('play-path').style.display = 'block';
+      document.getElementById('pause-path').style.display = 'none';
     } else {
-      playSong(currentIndex);
+      audio.play();
+      isPlaying = true;
+      document.getElementById('play-path').style.display = 'none';
+      document.getElementById('pause-path').style.display = 'block';
     }
-  }
-
-  // Previous song
-  function prevSong() {
-    currentIndex = (currentIndex - 1 + currentSongs.length) % currentSongs.length;
-    playSong(currentIndex);
-  }
-
-  // Next song
-  function nextSong() {
-    currentIndex = (currentIndex + 1) % currentSongs.length;
-    playSong(currentIndex);
-  }
-
- document.getElementById("playlist-select").addEventListener("change", function(e) {
-    const playlist = e.target.value;
-
-    // Stop the current song and reset the player
-    audio.pause();
-    isPlaying = false;
-    playPauseIcon.innerHTML = "&#9654;"; // Play icon when paused
-
-    // Filter songs based on the selected playlist
-    currentSongs = songs.filter(song => song.key.includes(playlist));
-
-    shuffledSongs = shuffleArray(currentSongs); // Shuffle the selected playlist
-    currentIndex = 0; // Reset to the first song
-    updateSongDetails(); // Reset the song details in the UI
-
-    // Optionally, show a message or UI update to indicate that the new playlist is ready
-    document.getElementById("song-name").textContent = "Choose a song to play";
-});
-  
-  // Handle song end event and auto switch to next song
-  audio.addEventListener('ended', function() {
-    currentIndex = (currentIndex + 1) % currentSongs.length;
-    playSong(currentIndex);
   });
 
-  // Initialize with shuffled playlist
-shuffledSongs = shuffleArray(songs);
-currentSongs = shuffledSongs;
-// playSong(currentIndex); <-- This line is removed to prevent auto-play
-updateSongDetails(); // Display song details but do not play the song
-  
-  // Event listeners for buttons
-  document.getElementById("play-pause").addEventListener("click", togglePlayPause);
-  document.getElementById("prev").addEventListener("click", prevSong);
-  document.getElementById("next").addEventListener("click", nextSong);
-  
-  // Function to filter and display search results
-  function searchSongs(query) {
-    const results = songs.filter(song => {
-      return song.name.toLowerCase().includes(query.toLowerCase()) ||
-             (song.movie && song.movie.toLowerCase().includes(query.toLowerCase()));
-    });
+  document.getElementById('next').addEventListener('click', () => {
+    if (isPlaying) {
+      audio.pause();
+      isPlaying = false;
+      document.getElementById('play-path').style.display = 'block';
+      document.getElementById('pause-path').style.display = 'none';
+    }
+    loadNextSong();
+    updateSongList();
+    document.getElementById('play-path').style.display = 'none';
+    document.getElementById('pause-path').style.display = 'block';
+  });
 
-    const resultsContainer = document.getElementById('search-results');
-    resultsContainer.innerHTML = ''; // Clear previous results
+  const searchBox = document.getElementById('search-box');
+  searchBox.addEventListener('input', () => {
+    const searchQuery = searchBox.value.toLowerCase().trim();
+    searchResults.innerHTML = '';
 
-    if (results.length > 0) {
-      results.forEach(song => {
-        const resultItem = document.createElement('div');
-        resultItem.classList.add('search-result-item');
-        resultItem.textContent = `${song.name} - ${song.movie || 'Movie Unknown'}`;
-        resultsContainer.appendChild(resultItem);
+    if (searchQuery) {
+      songs.forEach((song, index) => {
+        if (song.name.toLowerCase().includes(searchQuery) || song.movie.toLowerCase().includes(searchQuery)) {
+          const listItem = document.createElement('li');
+          listItem.textContent = `${song.name} - ${song.movie}`;
+          listItem.style.cursor = 'pointer';
+
+          listItem.addEventListener('click', () => {
+            songQueue.splice(0, 0, index); // Add selected song to the queue as next
+            updateSongList(); // Ensure list updates immediately
+            searchBox.value = ''; // Clear the search box
+            searchResults.innerHTML = ''; // Clear the search results
+          });
+
+          searchResults.appendChild(listItem);
+        }
       });
-    } else {
-      resultsContainer.textContent = 'No results found';
     }
-  }
-
-  // Event listener for search box input
-  document.getElementById('search-box').addEventListener('input', function() {
-    const query = this.value;
-    searchSongs(query); // Call search function with current input
   });
+
+  audio.addEventListener('ended', () => {
+    loadNextSong();
+  });
+
+  shuffleSongs();
+  loadNextSong();
+  
+  
   
 </script>
 
-</body>
-      </html>
+   </body>
+</html> 
