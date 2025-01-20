@@ -370,27 +370,13 @@
     style="width: 100%; padding: 5px; margin-bottom: 10px; border: 1px solid #55CC96;"
   />
   <span>QUEUE </span>
-  <ul id="song-list"></ul>
-</div>
+  <ul id="song-list"></ul></div>
   <div class="link-container">
     <a href="https://fb.com/atSUPERMAN" target="_blank" class="link">ⓕ atSUPERMAN</a>
     <div class="note-container"> </div> 
 </div>
+  <script src="song.js"></script> 
 <script>
-  const songs = [
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Achacho.mp3", name: "Achacho", movie: "Aranmanai 3" },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Chillanjirukkiye.mp3", name: "Chillanjirukkiye", movie: "Chilla jslslsljdhdhdhdhhdjdjdn Exam" },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/DIVINE.mp3", name: "Divine", movie: "Unknown" },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Edho%20Solla.mp3", name: "Edho Solla", movie: "Ugugu" },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Hey_Minnale.mp3", name: "Hey Minnale", movie: "Amaran" },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Naa_Ready.mp3", name: "Naa Ready", movie: "Beeea" },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Nee_Pottu_Vacha.mp3", name: "Nee Pottu Vacha", movie: "Vijay" },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Peelings.mp3", name: "Peelings", movie: "Pushpa 2" },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Poothathu_Poonthoppu.mp3", name: "Poothathu", movie: "Unknown" },
-    { url: "https://github.com/atsuperman/play2/raw/refs/heads/main/Sawadeeka.dev.mp3", name: "Sawedeeka", movie: "Unknown" }
-  ];
-
-
   let audio = new Audio();
   let currentSongIndex = 0;
   let isPlaying = false;
@@ -426,9 +412,6 @@ audio.addEventListener('ended', () => {
     linkContainer.style.display = 'none'; 
   }
 });
-
-
-
       
     // Floating musical notes
 function createNote() {
@@ -452,11 +435,6 @@ function randomNote() {
 }
 
 setInterval(createNote, 1000);
-    
-  
-  
-  
- // Inside your existing <script> tag
 // Function to format time as "00:00"
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
@@ -525,9 +503,6 @@ if ('mediaSession' in navigator) {
         artist: 'Unknown' 
     }); 
 }
-
-  
-  
   function loadNextSong() {
     if (songQueue.length === 0) {
         shuffleSongs();
