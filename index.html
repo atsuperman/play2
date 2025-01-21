@@ -8,8 +8,15 @@
 <body>
     <h1>Local Audio Player</h1>
     <audio controls>
-        <source src="Achacho.mp3" type="audio/mpeg">
+        <!-- Sources will be added dynamically -->
         Your browser does not support the audio element.
     </audio>
+
+    <!-- Link the JavaScript file -->
+    <script src="audioFiles.js"></script>
+    <script>
+        // Call the function to load the audio files
+        loadAudioFiles();
+    </script>
 </body>
 </html>
