@@ -1,13 +1,57 @@
-// Define repository URLs
-const repository1 = "https://github.com/atsuperman/play2/raw/refs/heads/main/";
-const repository2 = "https://github.com/atsuperman/play2/raw/refs/heads/main/";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified MP3 Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Unified Audio Player</h1>
+    <audio controls id="audioPlayer">
+        <!-- Sources will be added dynamically -->
+        Your browser does not support the audio element.
+    </audio>
+    <br>
+    <button id="nextButton">Next</button>
 
-// Define file names for each repository
-const repo1Songs = ["Achacho.mp3", "DIVINE.mp3"];
-const repo2Songs = ["song1.mp3", "song2.mp3"];
+    <script type="module">
+        import { allSongs } from './audioFiles.js';
 
-// Combine all songs with their full paths
-export const allSongs = [
-    ...repo1Songs.map(file => repository1 + file),
-    ...repo2Songs.map(file => repository2 + file)
-];
+        let currentSongIndex = 0; // Keep track of the current song
+
+        const audioPlayer = document.getElementById("audioPlayer");
+        const nextButton = document.getElementById("nextButton");
+
+        // Load the first song
+        function loadCurrentSong() {
+            audioPlayer.src = allSongs[currentSongIndex];
+            audioPlayer.play(); // Start playing the loaded song
+        }
+
+        // Play the next song
+        function playNextSong() {
+            currentSongIndex = (currentSongIndex + 1) % allSongs.length; // Loop back to the first song
+            loadCurrentSong();
+        }
+
+        // Event listener for the Next button
+        nextButton.addEventListener("click", playNextSong);
+
+        // Load the initial song
+        loadCurrentSong();
+    </script>
+</body>
+</html>
