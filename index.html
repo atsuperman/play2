@@ -1,57 +1,372 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unified MP3 Player</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Audio Player</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+      overflow: hidden;
+    }
+
+    .vertical-line {
+      position: absolute;
+      left: 2%;
+      top: 0;
+      height: 100%;
+      width: 5px;
+      background-color: black;
+    }
+
+    .prompt-container, .b-container {
+      margin-left: 6%;
+      padding: 10px;
+      border: 2px solid #555;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      box-sizing: border-box;
+      box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.5),
+                  5px -5px 15px rgba(50, 255, 50, 0.2);
+    }
+
+    .prompt-container {
+      background-color: #1e1e1e;
+      color: #33ff33;
+      font-family: monospace;
+      text-shadow: 0 0 5px #33ff33, 0 0 10px #00ff00, 0 0 20px #00ff00;
+    }
+
+  #song-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+}
+
+#song-list li {
+  margin-bottom: 8px;
+  color: black;
+}
+  
+  
+    .b-container {
+      background-color: white;
+      color: black;
+      text-align: center;
+      font-size: 1.2rem;
+      position: relative;
+      display: none; /* Initially hide the b-container */
+      flex-direction: column;
+      padding: 10px;
+    }
+
+
+    .icon-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background-color: white;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .icon-row .icon {
+      font-size: 1.5rem;
+      color: black;
+      cursor: pointer;
+    }
+  
+#progress-line {
+  background-color: black;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  text-align: center;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#progress-display {
+  font-family: 'white', sans-serif;
+  font-size: 0.8rem;
+  color: white;
+  letter-spacing: 0.5px;
+  text-transform: normal;
+}
+  .song-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    display: none;
+}
+  
+    .prompt-text {
+      display: flex;
+      flex-direction: column;
+      color: #33ff33;
+      font-size: 1rem;
+      text-shadow: 0 0 5px #33ff33, 0 0 10px #00ff00;
+      text-align: left;
+    }
+
+    .prompt-text .play-icon {
+      margin-right: 10px;
+      font-size: 1.2rem;
+      color: blue;
+    }
+
+    .prompt-text .movie-icon {
+      margin-right: 10px;
+      font-size: 1.2rem;
+      color: blue;
+    }
+
+  
+  /* Additional styles to ensure the search box stays on top */
+  #search-box {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #555;
+    margin-top: 0; /* Remove top margin to align with the container */
+  }
+
+  #song-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+
+  /* New styles for search results */
+  #search-results {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    margin-top: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    border-bottom: 1px solid #ccc;
+  }
+
+  #search-results li {
+    cursor: pointer;
+    padding: 5px;
+    background-color: #f1f1f1;
+    margin-bottom: 5px;
+  }
+
+  #search-results li:hover {
+    background-color: #e1e1e1;
+  }
+  
+  
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+  
+    @media screen and (max-width: 768px) {
+      .prompt-container, .b-container {
+        width: 90%;
+        max-width: none;
+        font-size: 0.9rem;
+      }
+
+      .icon-row .icon {
+        font-size: 1.2rem;
+      }
+
+      .prompt-text {
+        font-size: 1rem;
+      }
+
+      .b-container {
+        font-size: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Unified Audio Player</h1>
-    <audio controls id="audioPlayer">
-        <!-- Sources will be added dynamically -->
-        Your browser does not support the audio element.
-    </audio>
-    <br>
-    <button id="nextButton">Next</button>
 
-    <script type="module">
-        import { allSongs } from './audioFiles.js';
+<div class="vertical-line"></div>
 
-        let currentSongIndex = 0; // Keep track of the current song
+<div class="prompt-container">
+  <div class="audio-player">   
+  </div>
 
-        const audioPlayer = document.getElementById("audioPlayer");
-        const nextButton = document.getElementById("nextButton");
+  <div class="icon-row">
+     <span class="icon" id="play-pause">
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <path id="play-path" d="M8 5v14l11-7z" /> 
+          <path id="pause-path" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" style="display: none;" />
+        </svg>
+      </span>
+      <span class="icon" id="next">
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <path d="M10 6l6 6-6 6z" />
+        </svg>
+      </span>
+  </div>
+  
+  <div id="progress-line">
+    <span id="progress-display">_</span>
+    <div id="song-info" class="song-info"></div>
+  </div>
+  
+  <div class="prompt-text" id="current-song">
+    <div><span class="play-icon">&#9654;</span> <span id="song-name">No song is playing</span></div>
+    <div><span class="movie-icon">🎬</span> <span id="movie-name">Movie Unknown</span>
+    </div>
+     <button id="toggle-list" style="margin-TOP: 10px; padding: 3px 15px; border: red; background-color: skyblue; color: velvet; cursor: pointer;">LIST</button>
+  </div>
+  
+</div>
+<div class="b-container">
+   <!-- Add a search input box -->
+  <input 
+    type="text" 
+    id="search-box" 
+    placeholder="Search by name or movie..." 
+    style="width: 100%; padding: 5px; margin-bottom: 10px; border: 1px solid #555;"
+  />
+  
+  <ul id="search-results"></ul>
+  <ul id="song-list"></ul>
+</div>
 
-        // Load the first song into the audio player
-        function loadCurrentSong() {
-            audioPlayer.src = allSongs[currentSongIndex];
-            audioPlayer.play(); // Start playing the loaded song
+<script type="module">
+  import { allSongs } from './audioFiles.js';
+
+  let audio = new Audio();
+  let currentSongIndex = 0;
+  let isPlaying = false;
+  let shuffleOrder = [];
+  let songQueue = [];
+
+  const toggleListButton = document.getElementById('toggle-list');
+  const bContainer = document.querySelector('.b-container');
+  const searchResults = document.getElementById('search-results');
+
+  toggleListButton.addEventListener('click', () => {
+    bContainer.style.display = bContainer.style.display === 'none' || bContainer.style.display === '' ? 'flex' : 'none';
+  });
+
+  function shuffleSongs() {
+    shuffleOrder = [...Array(songs.length)].map((_, i) => i).sort(() => Math.random() - 0.5);
+    songQueue = [...shuffleOrder];
+  }
+
+  function loadNextSong() {
+    if (songQueue.length === 0) {
+      shuffleSongs();
+    }
+    currentSongIndex = songQueue.shift();
+    const currentSong = songs[currentSongIndex];
+    audio.src = currentSong.url;
+    updateSongInfo(currentSong);
+    audio.play();
+    updateSongList();
+  }
+
+  function updateSongInfo(song) {
+    document.getElementById('song-name').textContent = song.name;
+    document.getElementById('movie-name').textContent = song.movie;
+  }
+
+  function updateSongList() {
+    const songList = document.getElementById('song-list');
+    songList.innerHTML = '';
+    for (let i = 0; i < Math.min(5, songQueue.length); i++) {
+      const songIndex = songQueue[i];
+      const song = songs[songIndex];
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `<strong>${song.name}</strong> - <em>${song.movie}</em>`;
+      songList.appendChild(listItem);
+    }
+  }
+
+  document.getElementById('play-pause').addEventListener('click', () => {
+    if (isPlaying) {
+      audio.pause();
+      isPlaying = false;
+      document.getElementById('play-path').style.display = 'block';
+      document.getElementById('pause-path').style.display = 'none';
+    } else {
+      audio.play();
+      isPlaying = true;
+      document.getElementById('play-path').style.display = 'none';
+      document.getElementById('pause-path').style.display = 'block';
+    }
+  });
+
+  document.getElementById('next').addEventListener('click', () => {
+    if (isPlaying) {
+      audio.pause();
+      isPlaying = false;
+      document.getElementById('play-path').style.display = 'block';
+      document.getElementById('pause-path').style.display = 'none';
+    }
+    loadNextSong();
+    updateSongList();
+    document.getElementById('play-path').style.display = 'none';
+    document.getElementById('pause-path').style.display = 'block';
+  });
+
+  const searchBox = document.getElementById('search-box');
+  searchBox.addEventListener('input', () => {
+    const searchQuery = searchBox.value.toLowerCase().trim();
+    searchResults.innerHTML = '';
+
+    if (searchQuery) {
+      songs.forEach((song, index) => {
+        if (song.name.toLowerCase().includes(searchQuery) || song.movie.toLowerCase().includes(searchQuery)) {
+          const listItem = document.createElement('li');
+          listItem.textContent = `${song.name} - ${song.movie}`;
+          listItem.style.cursor = 'pointer';
+
+          listItem.addEventListener('click', () => {
+            songQueue.splice(0, 0, index); // Add selected song to the queue as next
+            updateSongList(); // Ensure list updates immediately
+            searchBox.value = ''; // Clear the search box
+            searchResults.innerHTML = ''; // Clear the search results
+          });
+
+          searchResults.appendChild(listItem);
         }
+      });
+    }
+  });
 
-        // Play the next song when the button is clicked
-        function playNextSong() {
-            currentSongIndex = (currentSongIndex + 1) % allSongs.length; // Loop back to the first song
-            loadCurrentSong();
-        }
+  audio.addEventListener('ended', () => {
+    loadNextSong();
+  });
 
-        // Event listener for the Next button
-        nextButton.addEventListener("click", playNextSong);
+  shuffleSongs();
+  loadNextSong();
+</script>
 
-        // Load the initial song
-        loadCurrentSong();
-    </script>
-</body>
+   </body>
 </html>
