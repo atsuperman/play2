@@ -250,27 +250,27 @@ function searchSongs() {
             resultItem.style.backgroundColor = "#f9f9f9";
         });
 
-        // Play selected song on click
-        resultItem.addEventListener("click", () => {
-            // Update the current song index
-            currentSongIndex = allSongs.findIndex(s => s.file === song.file);
+      // Queue selected song as the next one on click
+resultItem.addEventListener("click", () => {
+    // Set the selected song as the next song in the queue
+    const selectedIndex = allSongs.findIndex(s => s.file === song.file);
+    if (selectedIndex !== -1) {
+        currentSongIndex = selectedIndex;
+    }
 
-            // Load and play the selected song
-            loadCurrentSong();
+    // Hide the search box
+    searchBoxContainer.style.display = "none";
 
-            // Hide the search box
-            searchBoxContainer.style.display = "none";
+    // Remove the selected result from resultsContainer
+    resultItem.style.display = "none";
 
-            // Remove the selected result from resultsContainer
-            resultItem.style.display = "none";
-
-            // Add the song info below the current song
-            const selectedSongInfo = document.createElement("div");
-            selectedSongInfo.textContent = `Selected: ${song.file} - ${song.details}`;
-            selectedSongInfo.style.marginTop = "10px";
-            selectedSongInfo.style.color = "#555";
-            currentSongDisplay.appendChild(selectedSongInfo);
-        });
+    // Add the song info below the current song
+    const selectedSongInfo = document.createElement("div");
+    selectedSongInfo.textContent = `Queued: ${song.file.replace(".mp3", "").replace(/_/g, " ")} - ${song.details}`;
+    selectedSongInfo.style.marginTop = "10px";
+    selectedSongInfo.style.color = "#555";
+    currentSongDisplay.appendChild(selectedSongInfo);
+});
 
         resultsContainer.appendChild(resultItem);
     });
