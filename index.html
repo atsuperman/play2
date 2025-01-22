@@ -211,6 +211,78 @@ doneButton.addEventListener("click", () => {
     searchBoxContainer.style.display = "none";
 });
   
+  // Add search functionality
+const searchBox = document.getElementById("searchBox");
+
+// Function to filter songs and display results
+function searchSongs() {
+    const query = searchBox.value.toLowerCase();
+    const searchResults = allSongs.filter(song =>
+        song.file.toLowerCase().includes(query) || song.details.toLowerCase().includes(query)
+    );
+
+    // Display results in the search box container
+    const resultsContainer = document.createElement("div");
+    resultsContainer.id = "resultsContainer";
+    resultsContainer.style.marginTop = "10px";
+
+    // Clear previous results
+    if (document.getElementById("resultsContainer")) {
+        document.getElementById("resultsContainer").remove();
+    }
+
+    // Add new results
+    searchResults.forEach((song, index) => {
+        const resultItem = document.createElement("div");
+        resultItem.textContent = `${index + 1}. ${song.file} - ${song.details}`;
+        resultItem.style.padding = "5px";
+        resultItem.style.border = "1px solid #ccc";
+        resultItem.style.borderRadius = "3px";
+        resultItem.style.marginBottom = "5px";
+        resultItem.style.cursor = "pointer";
+        resultItem.style.backgroundColor = "#f9f9f9";
+
+        // Highlight result on hover
+        resultItem.addEventListener("mouseover", () => {
+            resultItem.style.backgroundColor = "#e0e0e0";
+        });
+        resultItem.addEventListener("mouseout", () => {
+            resultItem.style.backgroundColor = "#f9f9f9";
+        });
+
+        // Play selected song on click
+        resultItem.addEventListener("click", () => {
+            // Update the current song index
+            currentSongIndex = allSongs.findIndex(s => s.file === song.file);
+
+            // Load and play the selected song
+            loadCurrentSong();
+
+            // Hide the search box
+            searchBoxContainer.style.display = "none";
+
+            // Remove the selected result from resultsContainer
+            resultItem.style.display = "none";
+
+            // Add the song info below the current song
+            const selectedSongInfo = document.createElement("div");
+            selectedSongInfo.textContent = `Selected: ${song.file} - ${song.details}`;
+            selectedSongInfo.style.marginTop = "10px";
+            selectedSongInfo.style.color = "#555";
+            currentSongDisplay.appendChild(selectedSongInfo);
+        });
+
+        resultsContainer.appendChild(resultItem);
+    });
+
+    // Append results to the search box container
+    searchBoxContainer.appendChild(resultsContainer);
+}
+
+// Event listener for real-time search
+searchBox.addEventListener("input", searchSongs);
+  
+  
     </script>
 </body>
 </html>
