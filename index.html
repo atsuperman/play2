@@ -83,6 +83,20 @@
                 font-size: 1rem;
             }
         }
+
+        .search-result {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+
+        .search-result:hover {
+            background-color: #007BFF;
+            color: white;
+        }
+
     </style>
 </head>
 <body>
@@ -124,6 +138,7 @@
             <div id="songDetails" style="font-size: 14px; color: #007BFF;"></div>
         </div>
     </div>
+   <div id="searchResults" style="display: none; margin-bottom: 10px;"></div>
    <div id="searchBoxContainer" style="display: none; margin-top: 10px;">
     <input
         type="text"
@@ -151,21 +166,22 @@
         const playPath = document.getElementById("play-path");
         const pausePath = document.getElementById("pause-path");
         const currentSongDisplay = document.getElementById("currentSong");
+        const searchBox = document.getElementById("searchBox");
+        const searchResults = document.getElementById("searchResults");
+        const searchBoxContainer = document.getElementById("searchBoxContainer");
+        const doneButton = document.getElementById("doneButton");
 
         // Load the current song and update display
         function loadCurrentSong() {
-    const song = allSongs[currentSongIndex];
-    audioPlayer.src = song.path;
-    const currentSongName = song.file;
-    document.getElementById("currentSongName").textContent = currentSongName;
-
-    // Display the song details
-    document.getElementById("songDetails").textContent = song.details;
-
-    audioPlayer.play();
-    playPath.style.display = "none";
-    pausePath.style.display = "block";
-}
+            const song = allSongs[currentSongIndex];
+            audioPlayer.src = song.path;
+            const currentSongName = song.file;
+            document.getElementById("currentSongName").textContent = currentSongName;
+            document.getElementById("songDetails").textContent = song.details;
+            audioPlayer.play();
+            playPath.style.display = "none";
+            pausePath.style.display = "block";
+        }
 
         // Toggle Play/Pause functionality
         function togglePlayPause() {
@@ -192,12 +208,43 @@
         // Load the initial song
         loadCurrentSong();
   
-  // Get references to the search icon, search box container, and done button
-const searchIcon = document.getElementById("search");
-const searchBoxContainer = document.getElementById("searchBoxContainer");
-const doneButton = document.getElementById("doneButton");
+// Show/hide search results based on input
+searchBox.addEventListener("input", () => {
+    const searchTerm = searchBox.value.toLowerCase();
+    if (searchTerm === "") {
+        searchResults.style.display = "none";
+    } else {
+        const filteredSongs = allSongs.filter(song => 
+            song.file.toLowerCase().includes(searchTerm) || 
+            song.details.toLowerCase().includes(searchTerm)
+        );
+
+        // Display filtered results
+        searchResults.innerHTML = "";
+        if (filteredSongs.length > 0) {
+            filteredSongs.forEach(song => {
+                const resultDiv = document.createElement("div");
+                resultDiv.classList.add("search-result");
+                resultDiv.textContent = song.file;
+                resultDiv.addEventListener("click", () => {
+                    // Select the song
+                    currentSongIndex = allSongs.indexOf(song);
+                    loadCurrentSong();
+                    // Hide search results and show selected song details
+                    searchResults.style.display = "none";
+                    searchBoxContainer.style.display = "block";  // Keep the search box visible after selection
+                });
+                searchResults.appendChild(resultDiv);
+            });
+            searchResults.style.display = "block";
+        } else {
+            searchResults.style.display = "none";
+        }
+    }
+});
 
 // Toggle search box visibility when the search icon is clicked
+const searchIcon = document.getElementById("search");
 searchIcon.addEventListener("click", () => {
     if (searchBoxContainer.style.display === "none") {
         searchBoxContainer.style.display = "block";
@@ -210,7 +257,3 @@ searchIcon.addEventListener("click", () => {
 doneButton.addEventListener("click", () => {
     searchBoxContainer.style.display = "none";
 });
-  
-    </script>
-</body>
-</html>
