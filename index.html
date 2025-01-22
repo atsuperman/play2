@@ -15,11 +15,25 @@
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        h2 {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
         }
     </style>
 </head>
 <body>
     <h1>Unified Audio Player</h1>
+    <h2 id="currentSong">Now Playing: </h2>
     <audio controls id="audioPlayer">
         <!-- Sources will be added dynamically -->
         Your browser does not support the audio element.
@@ -34,14 +48,16 @@
 
         const audioPlayer = document.getElementById("audioPlayer");
         const nextButton = document.getElementById("nextButton");
+        const currentSongDisplay = document.getElementById("currentSong");
 
-        // Load the first song into the audio player
+        // Load the current song into the audio player and update display
         function loadCurrentSong() {
             audioPlayer.src = allSongs[currentSongIndex];
+            currentSongDisplay.textContent = `Now Playing: ${allSongs[currentSongIndex].split('/').pop()}`;
             audioPlayer.play(); // Start playing the loaded song
         }
 
-        // Play the next song when the button is clicked
+        // Play the next song
         function playNextSong() {
             currentSongIndex = (currentSongIndex + 1) % allSongs.length; // Loop back to the first song
             loadCurrentSong();
@@ -49,6 +65,20 @@
 
         // Event listener for the Next button
         nextButton.addEventListener("click", playNextSong);
+
+        // Automatically play the next song when the current one ends
+        audioPlayer.addEventListener("ended", playNextSong);
+
+        // Handle errors while loading songs
+        audioPlayer.onerror = () => {
+            alert("Error loading song. Skipping to the next one...");
+            playNextSong();
+        };
+
+        // Keyboard shortcuts for navigation
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowRight") playNextSong(); // Next song
+        });
 
         // Load the initial song
         loadCurrentSong();
