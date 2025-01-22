@@ -156,9 +156,9 @@
         function loadCurrentSong() {
     const song = allSongs[currentSongIndex];
     audioPlayer.src = song.path;
-    const currentSongName = song.file;
-    document.getElementById("currentSongName").textContent = currentSongName;
-
+    const currentSongName = song.file.replace(".mp3", "").replace(/_/g, " ");
+document.getElementById("currentSongName").textContent = currentSongName;
+          
     // Display the song details
     document.getElementById("songDetails").textContent = song.details;
 
