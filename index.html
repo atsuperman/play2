@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unified Audio Player</title>
+    <title>Audio player</title>
     <style>
         body {
             margin: 0;
@@ -46,7 +46,7 @@
         }
 
         .b-container {
-            background-color: yellow;
+            background-color: skyblue;
             color: #33ff33;
             font-family: 'Poppins', sans-serif;
             text-shadow: 0 0 5px #33ff33, 0 0 10px #00ff00, 0 0 20px #00ff00;
@@ -86,24 +86,27 @@
     </style>
 </head>
 <body>
-    <h1>Unified Audio Player</h1>
     <div class="vertical-line"></div>
     <!-- A-container for Play/Pause toggle -->
     <div class="a-container">
-        <div class="icon-row">
-            <span class="icon" id="play-pause">
-                <svg width="24" height="24" viewBox="0 0 24 24">
-                    <path id="play-path" d="M8 5v14l11-7z" /> 
-                    <path id="pause-path" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" style="display: none;" />
-                </svg>
-            </span>
-            <span class="icon" id="next">
-                <svg width="24" height="24" viewBox="0 0 24 24">
-                    <path d="M10 6l6 6-6 6z" />
-                </svg>
-            </span>
-        </div>
+       <div class="icon-row">
+    <span class="icon" id="play-pause">
+        <svg width="24" height="24" viewBox="0 0 24 24">
+            <path id="play-path" d="M8 5v14l11-7z" />
+            <path id="pause-path" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" style="display: none;" />
+        </svg>
+    </span>
+   <span class="icon" id="next">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="#000000">
+        <path d="M4 4v16l12-8-12-8zm14 0h2v16h-2z"></path>
+    </svg>
 </span>
+<span class="icon" id="search">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="#000000">
+        <path d="M21.71 20.29l-5.37-5.37A7.92 7.92 0 0 0 18 10a8 8 0 1 0-8 8 7.92 7.92 0 0 0 4.92-1.66l5.37 5.37a1 1 0 0 0 1.42-1.42ZM10 16a6 6 0 1 1 6-6 6 6 0 0 1-6 6Z"></path>
+    </svg>
+</span>
+</div>
     </div>
     <!-- B-container left empty -->
  <div class="b-container">
@@ -118,7 +121,7 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="#555" style="margin-right: 5px;">
                 <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z"></path>
             </svg>
-            <div id="songDetails" style="font-size: 14px; color: #555;"></div>
+            <div id="songDetails" style="font-size: 14px; color: #007BFF;"></div>
         </div>
     </div>
 </div>
