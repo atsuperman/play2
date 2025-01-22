@@ -52,16 +52,21 @@
             text-shadow: 0 0 5px #33ff33, 0 0 10px #00ff00, 0 0 20px #00ff00;
         }
 
-        .play-pause-icon {
-            font-size: 24px;
-            cursor: pointer;
-            color: #007BFF;
-            transition: color 0.3s ease;
-        }
+        .icon-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
 
-        .play-pause-icon:hover {
-            color: #0056b3;
-        }
+.icon {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.icon:hover {
+    transform: scale(1.2);
+}
     @media screen and (max-width: 768px) {
       .a-container, .b-container {
         width: 90%;
@@ -124,35 +129,25 @@
             playPauseIcon.textContent = "⏸"; // Switch to Pause icon
         }
 
-        // Toggle Play/Pause functionality
-        function togglePlayPause() {
-            if (audioPlayer.paused) {
-                audioPlayer.play();
-                playPauseIcon.textContent = "⏸"; // Pause icon
-            } else {
-                audioPlayer.pause();
-                playPauseIcon.textContent = "▶"; // Play icon
-            }
-        }
+       // Select the play and pause path elements
+const playPath = document.getElementById("play-path");
+const pausePath = document.getElementById("pause-path");
 
-        // Automatically load the next song when the current one ends
-        audioPlayer.addEventListener("ended", () => {
-            currentSongIndex = (currentSongIndex + 1) % allSongs.length;
-            loadCurrentSong();
-        });
+// Toggle Play/Pause functionality
+function togglePlayPause() {
+    if (audioPlayer.paused) {
+        audioPlayer.play();
+        playPath.style.display = "none";
+        pausePath.style.display = "block";
+    } else {
+        audioPlayer.pause();
+        playPath.style.display = "block";
+        pausePath.style.display = "none";
+    }
+}
 
-        // Handle errors during song playback
-        audioPlayer.onerror = () => {
-            alert("Error loading song. Skipping to the next one...");
-            currentSongIndex = (currentSongIndex + 1) % allSongs.length;
-            loadCurrentSong();
-        };
-
-        // Event listener for Play/Pause toggle
-        playPauseIcon.addEventListener("click", togglePlayPause);
-
-        // Load the initial song
-        loadCurrentSong();
+// Event listener for Play/Pause toggle
+document.getElementById("play-pause").addEventListener("click", togglePlayPause);
     </script>
 </body>
 </html>
