@@ -111,9 +111,10 @@
 </span>
     </div>
     <!-- B-container left empty -->
-    <div class="b-container"></div>
-
-    <audio id="audioPlayer">
+    <div class="b-container">
+<span id="songDetails" style="font-size: 14px; color: #555; margin-top: 5px;"></span>
+    </div>
+      <audio id="audioPlayer">
         Your browser does not support the audio element.
     </audio>
 
@@ -128,9 +129,14 @@
 
         // Load the current song and update display
         function loadCurrentSong() {
-    audioPlayer.src = allSongs[currentSongIndex];
-    const currentSongName = allSongs[currentSongIndex].split('/').pop();
+    const song = allSongs[currentSongIndex];
+    audioPlayer.src = song.path;
+    const currentSongName = song.file;
     document.getElementById("currentSongName").textContent = currentSongName;
+
+    // Display the song details
+    document.getElementById("songDetails").textContent = song.details;
+
     audioPlayer.play();
     playPath.style.display = "none";
     pausePath.style.display = "block";
