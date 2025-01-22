@@ -5,30 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unified Audio Player</title>
     <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #f4f4f4;
-      overflow: hidden;
-    }
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            overflow: hidden;
+        }
 
-    .vertical-line {
-      position: absolute;
-      left: 2%;
-      top: 0;
-      height: 100%;
-      width: 5px;
-      background-color: black;
-    }
+        .vertical-line {
+            position: absolute;
+            left: 2%;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background-color: black;
+        }
 
         .current-song {
             font-size: 18px;
-            margin-bottom: 20px;
+            margin-top: 10px;
             color: #333;
             font-weight: bold;
         }
@@ -53,73 +53,72 @@
         }
 
         .icon-row {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-top: 10px;
-}
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
 
-.icon {
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
+        .icon {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
 
-.icon:hover {
-    transform: scale(1.2);
-}
-    @media screen and (max-width: 768px) {
-      .a-container, .b-container {
-        width: 90%;
-        max-width: none;
-        font-size: 0.9rem;
-      }
+        .icon:hover {
+            transform: scale(1.2);
+        }
 
-      .icon-row .icon {
-        font-size: 1.2rem;
-      }
+        @media screen and (max-width: 768px) {
+            .a-container, .b-container {
+                width: 90%;
+                max-width: none;
+                font-size: 0.9rem;
+            }
 
-      .a-text {
-        font-size: 1rem;
-      }
+            .icon-row .icon {
+                font-size: 1.2rem;
+            }
 
-      .b-container {
-        font-size: 1rem;
-      }
-    }
+            .b-container {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
     <h1>Unified Audio Player</h1>
-  <div class="vertical-line"></div>
+    <div class="vertical-line"></div>
     <!-- A-container for Play/Pause toggle -->
-   <div class="a-container">
-      <audio id="audioPlayer">
-        Your browser does not support the audio element.
-    </audio>
-    <div class="icon-row">
-        <span class="icon" id="play-pause">
-            <svg width="24" height="24" viewBox="0 0 24 24">
-                <path id="play-path" d="M8 5v14l11-7z" /> 
-                <path id="pause-path" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" style="display: none;" />
-            </svg>
-        </span>
-        <span class="icon" id="next">
-            <svg width="24" height="24" viewBox="0 0 24 24">
-                <path d="M10 6l6 6-6 6z" />
-            </svg>
-        </span>
+    <div class="a-container">
+        <div class="icon-row">
+            <span class="icon" id="play-pause">
+                <svg width="24" height="24" viewBox="0 0 24 24">
+                    <path id="play-path" d="M8 5v14l11-7z" /> 
+                    <path id="pause-path" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" style="display: none;" />
+                </svg>
+            </span>
+            <span class="icon" id="next">
+                <svg width="24" height="24" viewBox="0 0 24 24">
+                    <path d="M10 6l6 6-6 6z" />
+                </svg>
+            </span>
+        </div>
+        <span class="current-song" id="currentSong">Now Playing: </span>
     </div>
-    <span class="current-song" id="currentSong">Now Playing: </span>
-</div>
     <!-- B-container left empty -->
     <div class="b-container"></div>
+
+    <audio id="audioPlayer">
+        Your browser does not support the audio element.
+    </audio>
 
     <script type="module">
         import { allSongs } from './audioFiles.js';
 
         let currentSongIndex = 0; // Keep track of the current song
         const audioPlayer = document.getElementById("audioPlayer");
-        const playPauseIcon = document.getElementById("playPauseIcon");
+        const playPath = document.getElementById("play-path");
+        const pausePath = document.getElementById("pause-path");
         const currentSongDisplay = document.getElementById("currentSong");
 
         // Load the current song and update display
@@ -127,50 +126,34 @@
             audioPlayer.src = allSongs[currentSongIndex];
             currentSongDisplay.textContent = `Now Playing: ${allSongs[currentSongIndex].split('/').pop()}`;
             audioPlayer.play();
-            playPauseIcon.textContent = "⏸"; // Switch to Pause icon
+            playPath.style.display = "none";
+            pausePath.style.display = "block";
         }
 
-     // Select elements
-const audioPlayer = document.getElementById("audioPlayer");
-const playPath = document.getElementById("play-path");
-const pausePath = document.getElementById("pause-path");
-const currentSongDisplay = document.getElementById("currentSong");
+        // Toggle Play/Pause functionality
+        function togglePlayPause() {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playPath.style.display = "none";
+                pausePath.style.display = "block";
+            } else {
+                audioPlayer.pause();
+                playPath.style.display = "block";
+                pausePath.style.display = "none";
+            }
+        }
 
-let currentSongIndex = 0; // Keep track of the current song
+        // Automatically load the next song when the current one ends
+        audioPlayer.addEventListener("ended", () => {
+            currentSongIndex = (currentSongIndex + 1) % allSongs.length;
+            loadCurrentSong();
+        });
 
-// Load the current song and update the display
-function loadCurrentSong() {
-    audioPlayer.src = allSongs[currentSongIndex];
-    currentSongDisplay.textContent = `Now Playing: ${allSongs[currentSongIndex].split('/').pop()}`;
-    audioPlayer.play();
-    playPath.style.display = "none";
-    pausePath.style.display = "block";
-}
+        // Event listener for Play/Pause toggle
+        document.getElementById("play-pause").addEventListener("click", togglePlayPause);
 
-// Toggle Play/Pause functionality
-function togglePlayPause() {
-    if (audioPlayer.paused) {
-        audioPlayer.play();
-        playPath.style.display = "none";
-        pausePath.style.display = "block";
-    } else {
-        audioPlayer.pause();
-        playPath.style.display = "block";
-        pausePath.style.display = "none";
-    }
-}
-
-// Automatically load the next song when the current one ends
-audioPlayer.addEventListener("ended", () => {
-    currentSongIndex = (currentSongIndex + 1) % allSongs.length;
-    loadCurrentSong();
-});
-
-// Event listener for Play/Pause toggle
-document.getElementById("play-pause").addEventListener("click", togglePlayPause);
-
-// Load the initial song
-loadCurrentSong();
+        // Load the initial song
+        loadCurrentSong();
     </script>
 </body>
 </html>
