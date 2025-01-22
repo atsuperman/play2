@@ -103,7 +103,12 @@
                 </svg>
             </span>
         </div>
-        <span class="current-song" id="currentSong">Now Playing: </span>
+        <span id="currentSong">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="#007BFF" style="margin-right: 5px;">
+        <path d="M12 3v18l9-9-9-9zm-9 9h7v-2H3v2zm0 4h7v-2H3v2zm0-8h7V7H3v2z"></path>
+    </svg>
+    <span id="currentSongName"></span>
+</span>
     </div>
     <!-- B-container left empty -->
     <div class="b-container"></div>
@@ -123,12 +128,13 @@
 
         // Load the current song and update display
         function loadCurrentSong() {
-            audioPlayer.src = allSongs[currentSongIndex];
-            currentSongDisplay.textContent = `Now Playing: ${allSongs[currentSongIndex].split('/').pop()}`;
-            audioPlayer.play();
-            playPath.style.display = "none";
-            pausePath.style.display = "block";
-        }
+    audioPlayer.src = allSongs[currentSongIndex];
+    const currentSongName = allSongs[currentSongIndex].split('/').pop();
+    document.getElementById("currentSongName").textContent = currentSongName;
+    audioPlayer.play();
+    playPath.style.display = "none";
+    pausePath.style.display = "block";
+}
 
         // Toggle Play/Pause functionality
         function togglePlayPause() {
