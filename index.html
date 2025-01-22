@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -378,23 +379,59 @@
 </div>
 
 
-    <script type="module">
-        import { repo1Files } from './audioFiles1.js';
-        import { repo2Files } from './audioFiles2.js';
+<script type="module">
+  // Import audio files
+  import { allSongs } from './audioFiles.js';
 
-        const audioFiles = [...repo1Files, ...repo2Files]; // Combine both lists
+  let currentTrackIndex = 0;
+  const audio = document.getElementById('audio');
+  const playPauseButton = document.getElementById('play-pause');
+  const playPath = document.getElementById('play-path');
+  const pausePath = document.getElementById('pause-path');
 
-        function loadAudioFiles() {
-            const audioPlayer = document.querySelector("audio");
-            audioFiles.forEach(file => {
-                const source = document.createElement("source");
-                source.src = file;
-                source.type = "audio/mpeg";
-                audioPlayer.appendChild(source);
-            });
-        }
+  // Load the first audio file
+  function loadTrack(index) {
+    if (allSongs.length === 0) {
+      console.error('No audio files available.');
+      return;
+    }
+    audio.src = allSongs[index];
+    audio.load();
+  }
 
-        loadAudioFiles();
-    </script>
+  // Play or pause audio
+  function togglePlayPause() {
+    if (audio.paused) {
+      audio.play();
+      playPath.style.display = 'none';
+      pausePath.style.display = 'block';
+    } else {
+      audio.pause();
+      playPath.style.display = 'block';
+      pausePath.style.display = 'none';
+    }
+  }
+
+  // Load the next track
+  function loadNextTrack() {
+    if (allSongs.length === 0) {
+      console.error('No audio files available.');
+      return;
+    }
+    currentTrackIndex = (currentTrackIndex + 1) % allSongs.length;
+    loadTrack(currentTrackIndex);
+    audio.play();
+    playPath.style.display = 'none';
+    pausePath.style.display = 'block';
+  }
+
+  // Attach event listeners
+  playPauseButton.addEventListener('click', togglePlayPause);
+  document.getElementById('next').addEventListener('click', loadNextTrack);
+
+  // Initialize the first track
+  loadTrack(currentTrackIndex);
+</script>
+
 </body>
 </html>
