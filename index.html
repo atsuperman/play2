@@ -1,437 +1,57 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AUDIO PLAYER</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #f4f4f4;
-      overflow: hidden;
-    }
-
-           
- .link-container {
-    position: relative; /* Make link-container the relative container */
-    text-align: center;
-    padding: 2px;
-    margin-top: 10vh; 
-    margin-bottom: 1px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .link {
-    font-size: 1em;
-    font-weight: bold;
-    color: black;
-    text-decoration: none;
-    text-shadow: 0 0 5px black;
-    animation: glow 2s infinite;
-}
-  
- @keyframes glow {
-    0%, 100% {
-        text-shadow: 0 0 5px black;
-    }
-    50% {
-        text-shadow: 0 0 15px black;
-    }
-} 
-  
-  
-  .note { 
-    position: absolute; 
-    bottom: 0; /* Start at the bottom of the container */
-    left: 50%; /* Center horizontally */
-    transform: translateX(50%); /* Adjust for center positioning */
-    font-size: 1.5em;
-    color: silver;
-    opacity: 0;
-    animation: floatUp 3s ease-out forwards;
-}
-
-@keyframes floatUp {
-    0% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(-200px) scale(0.5);
-        opacity: 0;
-    }
-}
-
-  
-    .vertical-line {
-      position: absolute;
-      left: 2%;
-      top: 0;
-      height: 100%;
-      width: 5px;
-      background-color: black;
-    }
-
-    .prompt-container, .b-container {
-      margin-left: 6%;
-      padding: 10px;
-      border: 2px solid #555;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 500px;
-      box-sizing: border-box;
-      box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.5),
-                  5px -5px 15px rgba(50, 255, 50, 0.2);
-    }
-
-    .prompt-container {
-      background-color: #1e1e1e;
-      color: #33ff33;
-      font-family: 'Poppins', sans-serif;
-      text-shadow: 0 0 5px #33ff33, 0 0 10px #00ff00, 0 0 20px #00ff00;
-    }
-
-  #song-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  text-align: left;
-  font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
-}
-
-#song-list li {
-  margin-bottom: 8px;
-  color: #191970;
-}
-  
-  
-    .b-container {
-      background-color: white;
-      color: black;
-      text-align: center;
-      font-size: 1.2rem;
-      position: relative;
-      display: none; /* Initially hide the b-container */
-      flex-direction: column;
-      padding: 10px;
-    }
-
-
-    .icon-row {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      background-color: #F0FFFF;
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 10px;
-    }
-
-    .icon-row .icon {
-      font-size: 1.5rem;
-      color: black;
-      cursor: pointer;
-    }
-  
-/* Progress Display Container */
-#progress-line {
-  width: 100%;
-  height: 30px; /* Height of the progress bar */
-  background-color: yellow; /* Background color of the progress bar */
-  border-radius: 1px;
-  position: relative; /* So the text is centered inside */
-  margin-top: 10px;
-}
-
-/* Enhanced Progress Text Display */
-#progress-display {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Arial', sans-serif;
-  font-size: 11px;
-  color: #fff;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-  z-index: 2;
-
-  /* Adjust to fit container */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  overflow: hidden; /* Prevents text from overflowing */
-  text-overflow: ellipsis; /* Displays ellipsis if text overflows */
-  max-width: 95%; /* Ensures text stays within the container width */
-  word-break: break-word; /* Breaks words if necessary to fit */
-  line-height: 1.2; /* Adjusts text spacing for readability */
-  box-sizing: border-box; /* Includes padding in width calculations */
-  padding: 2px 4px; /* Adds padding to the text for better spacing */
-}
-
-/* Scale down text if it overflows */
-#progress-display:after {
-  content: attr(data-text); /* Displays the actual text from an attribute */
-  visibility: hidden; /* Hidden content used to measure actual size */
-  white-space: nowrap; /* Keeps text in a single line */
-  font-size: inherit;
-}
-
-#progress-display.scaled {
-  font-size: calc(10px + 0.3vw); /* Dynamically adjusts size */
-}
-
-/* Progress Color Inside the Display */
-#progress-line {
-  background: linear-gradient(to right, 
-    #4B0082 0%,           /* Rich velvet blue */
-    #4B0082 var(--progress, 0%), 
-    #000000 var(--progress, 0%),  /* Black */
-    #000000 100%);         /* Black color */
-}
-  
-
-@keyframes scroll-text {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
-
-/* Optional: Add styling to the container */
-.prompt-container {
-  padding: 20px;
-  background-color: #1e1e1e;
-  color: #33ff33;
-  font-family: monospace;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 500px;
-  box-sizing: border-box;
-  box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.5), 5px -5px 15px rgba(50, 255, 50, 0.2);
-}
-  
-  .song-info {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    display: none;
-}
-  
-    .prompt-text {
-      display: flex;
-      flex-direction: column;
-      color: #33ff33;
-      font-size: 1rem;
-      text-shadow: 0 0 5px #33ff33, 0 0 10px #00ff00;
-      text-align: left;
-    }
-
-    .prompt-text .play-icon {
-      margin-right: 10px;
-      font-size: 1.2rem;
-      color: blue;
-    }
-
-    .prompt-text .movie-icon {
-      margin-right: 10px;
-      font-size: 1.2rem;
-      color: blue;
-    }
-
-  
-  /* Additional styles to ensure the search box stays on top */
-  #search-box {
-    width: 100%;
-    padding: 5px;
-    margin-bottom: 10px;
-    border: 1px solid #555;
-    margin-top: 0; /* Remove top margin to align with the container */
-  }
-
-  #song-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    text-align: left;
-    font-family: 'Poppins', sans-serif;
-    font-size: 1rem;
-    margin-top: 10px;
-  }
-
-  /* New styles for search results */
-  #search-results {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    font-family: Arial, sans-serif;
-    font-size: 1rem;
-    margin-bottom: 10px;
-    max-height: 150px;
-    overflow-y: auto;
-    border-bottom: 1px solid #ccc;
-  }
-
-  #search-results li {
-    cursor: pointer;
-    padding: 5px;
-    background-color: #DAF7A6;
-    margin-bottom: 5px;
-  }
-
-  #search-results li:hover {
-    background-color: #e1e1e1;
-  }
-  
-  
-@keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
-}
-  @media screen and (max-width: 768px) {
-  /* Target the specific element containing the lengthy text (e.g., .prompt-text) */
-  .prompt-text {
-    /* Adjust font size for smaller screens */
-    font-size: 0.9rem; 
-
-    /* Enable text wrapping */
-    word-wrap: break-word; 
-
-    /* Optional: Add more space for better readability */
-    line-height: 1.5; 
-  }
-}
-
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified MP3 Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+    <h1>Unified Audio Player</h1>
+    <audio controls id="audioPlayer">
+        <!-- Sources will be added dynamically -->
+        Your browser does not support the audio element.
+    </audio>
+    <br>
+    <button id="nextButton">Next</button>
 
-<div class="vertical-line"></div>
+    <script type="module">
+        import { allSongs } from './audioFiles.js';
 
-<div class="prompt-container">
-  <div class="audio-player">   
-  </div>
+        let currentSongIndex = 0; // Keep track of the current song
 
-  <div class="icon-row">
-     <span class="icon" id="play-pause">
-        <svg width="24" height="24" viewBox="0 0 24 24">
-          <path id="play-path" d="M8 5v14l11-7z" /> 
-          <path id="pause-path" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" style="display: none;" />
-        </svg>
-      </span>
-      <span class="icon" id="next">
-        <svg width="24" height="24" viewBox="0 0 24 24">
-          <path d="M10 6l6 6-6 6z" />
-        </svg>
-      </span>
-  </div>
-  
-  <div id="progress-line">
-    <span id="progress-display">_</span>
-    <div id="song-info" class="song-info"></div>
-  </div>
-  
-  <div class="prompt-text" id="current-song">
-    <div style="display: flex; align-items: center;"> 
-    <span class="play-icon">&#9654;</span>
-    <span id="song-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">No song is playing</span>
-  </div>
-    <div style="display: flex; align-items: center;"> 
-    <span class="movie-icon">🎬 </span>
-    <span id="movie-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Movie Unknown</span>
-  </div> 
-     <button id="toggle-list" style="margin-TOP: 10px; padding: 3px 15px; border: red; background-color: #1280D4; color: velvet; cursor: pointer;">LIST ▼</button>
-  </div>
-  
-</div>
-<div class="b-container">
-   <ul id="search-results"></ul>
-   <!-- Add a search input box -->
-  <input 
-    type="text" 
-    id="search-box" 
-    placeholder="+ Search & Add Tracks" 
-    style="width: 100%; padding: 5px; margin-bottom: 10px; border: 1px solid #55CC96;"
-  />
-  <span>QUEUE </span>
-  <ul id="song-list"></ul>
-</div>
-  <div class="link-container">
-    <a href="https://fb.com/atSUPERMAN" target="_blank" class="link">ⓕ atSUPERMAN</a>
-    <div class="note-container"> </div> 
-</div>
+        const audioPlayer = document.getElementById("audioPlayer");
+        const nextButton = document.getElementById("nextButton");
 
+        // Load the first song into the audio player
+        function loadCurrentSong() {
+            audioPlayer.src = allSongs[currentSongIndex];
+            audioPlayer.play(); // Start playing the loaded song
+        }
 
-<script type="module">
-  // Import audio files
-  import { allSongs } from './audioFiles.js';
+        // Play the next song when the button is clicked
+        function playNextSong() {
+            currentSongIndex = (currentSongIndex + 1) % allSongs.length; // Loop back to the first song
+            loadCurrentSong();
+        }
 
-  let currentTrackIndex = 0;
-  const audio = document.getElementById('audio');
-  const playPauseButton = document.getElementById('play-pause');
-  const playPath = document.getElementById('play-path');
-  const pausePath = document.getElementById('pause-path');
+        // Event listener for the Next button
+        nextButton.addEventListener("click", playNextSong);
 
-  // Load the first audio file
-  function loadTrack(index) {
-    if (allSongs.length === 0) {
-      console.error('No audio files available.');
-      return;
-    }
-    audio.src = allSongs[index];
-    audio.load();
-  }
-
-  // Play or pause audio
-  function togglePlayPause() {
-    if (audio.paused) {
-      audio.play();
-      playPath.style.display = 'none';
-      pausePath.style.display = 'block';
-    } else {
-      audio.pause();
-      playPath.style.display = 'block';
-      pausePath.style.display = 'none';
-    }
-  }
-
-  // Load the next track
-  function loadNextTrack() {
-    if (allSongs.length === 0) {
-      console.error('No audio files available.');
-      return;
-    }
-    currentTrackIndex = (currentTrackIndex + 1) % allSongs.length;
-    loadTrack(currentTrackIndex);
-    audio.play();
-    playPath.style.display = 'none';
-    pausePath.style.display = 'block';
-  }
-
-  // Attach event listeners
-  playPauseButton.addEventListener('click', togglePlayPause);
-  document.getElementById('next').addEventListener('click', loadNextTrack);
-
-  // Initialize the first track
-  loadTrack(currentTrackIndex);
-</script>
-
+        // Load the initial song
+        loadCurrentSong();
+    </script>
 </body>
 </html>
