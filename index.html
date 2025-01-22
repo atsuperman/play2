@@ -46,7 +46,7 @@
         }
 
         .b-container {
-            background-color: #1e1e1e;
+            background-color: yellow;
             color: #33ff33;
             font-family: 'Poppins', sans-serif;
             text-shadow: 0 0 5px #33ff33, 0 0 10px #00ff00, 0 0 20px #00ff00;
@@ -106,13 +106,22 @@
 </span>
     </div>
     <!-- B-container left empty -->
-    <div class="b-container">
- <span id="currentSong"> <svg width="16" height="16" viewBox="0 0 24 24" fill="#007BFF" style="margin-right: 5px;">
-        <path d="M12 3v18l9-9-9-9zm-9 9h7v-2H3v2zm0 4h7v-2H3v2zm0-8h7V7H3v2z"></path>
-    </svg>
-    <span id="currentSongName"></span>
-<span id="songDetails" style="font-size: 14px; color: #555; margin-top: 5px;"></span>
+ <div class="b-container">
+    <div id="currentSong">
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#007BFF" style="margin-right: 5px;">
+                <path d="M12 3v18l9-9-9-9zm-9 9h7v-2H3v2zm0 4h7v-2H3v2zm0-8h7V7H3v2z"></path>
+            </svg>
+            <div id="currentSongName" style="font-weight: bold; color: #007BFF;"></div>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#555" style="margin-right: 5px;">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z"></path>
+            </svg>
+            <div id="songDetails" style="font-size: 14px; color: #555;"></div>
+        </div>
     </div>
+</div>
       <audio id="audioPlayer">
         Your browser does not support the audio element.
     </audio>
