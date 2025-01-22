@@ -124,6 +124,20 @@
             <div id="songDetails" style="font-size: 14px; color: #007BFF;"></div>
         </div>
     </div>
+   <div id="searchBoxContainer" style="display: none; margin-top: 10px;">
+    <input
+        type="text"
+        id="searchBox"
+        placeholder="Search songs..."
+        style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;"
+    />
+    <button
+        id="doneButton"
+        style="margin-top: 10px; width: 100%; padding: 10px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;"
+    >
+        Done
+    </button>
+</div>
 </div>
       <audio id="audioPlayer">
         Your browser does not support the audio element.
@@ -177,6 +191,26 @@
 
         // Load the initial song
         loadCurrentSong();
+  
+  // Get references to the search icon, search box container, and done button
+const searchIcon = document.getElementById("search");
+const searchBoxContainer = document.getElementById("searchBoxContainer");
+const doneButton = document.getElementById("doneButton");
+
+// Toggle search box visibility when the search icon is clicked
+searchIcon.addEventListener("click", () => {
+    if (searchBoxContainer.style.display === "none") {
+        searchBoxContainer.style.display = "block";
+    } else {
+        searchBoxContainer.style.display = "none";
+    }
+});
+
+// Hide search box when the done button is clicked
+doneButton.addEventListener("click", () => {
+    searchBoxContainer.style.display = "none";
+});
+  
     </script>
 </body>
 </html>
