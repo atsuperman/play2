@@ -1,6 +1,8 @@
+
+
 // Define repository URLs 
 const repository1 = "https://github.com/atsuperman/play2/raw/refs/heads/main/";
-const repository2 = "https://github.com/atsuperman/play2/raw/refs/heads/main/";
+const repository2 = "https://github.com/atsuperman/PLAY/raw/refs/heads/main/";
 
 // Define file names for each repository
 const repo1Songs = [
@@ -8,7 +10,7 @@ const repo1Songs = [
     { file: "DIVINE.mp3", details: "Details: This is details for DIVINE song." }
 ];
 const repo2Songs = [
-    { file: "song1.mp3", details: "Details: This is details for song1." },
+    { file: "Beer_song_Pacha_Kuthikennen.mp3", details: "Details: This is details for song1." },
     { file: "song2.mp3", details: "Details: This is details for song2." }
 ];
 
