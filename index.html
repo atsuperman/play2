@@ -92,26 +92,27 @@
     <h1>Unified Audio Player</h1>
   <div class="vertical-line"></div>
     <!-- A-container for Play/Pause toggle -->
-    <div class="a-container">
-        <div class="icon-row">
-    <span class="icon" id="play-pause">
-        <svg width="24" height="24" viewBox="0 0 24 24">
-            <path id="play-path" d="M8 5v14l11-7z" /> 
-            <path id="pause-path" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" style="display: none;" />
-        </svg>
-    </span>
-    <span class="icon" id="next">
-        <svg width="24" height="24" viewBox="0 0 24 24">
-            <path d="M10 6l6 6-6 6z" />
-        </svg>
-    </span>
+   <div class="a-container">
+      <audio id="audioPlayer">
+        Your browser does not support the audio element.
+    </audio>
+    <div class="icon-row">
+        <span class="icon" id="play-pause">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+                <path id="play-path" d="M8 5v14l11-7z" /> 
+                <path id="pause-path" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" style="display: none;" />
+            </svg>
+        </span>
+        <span class="icon" id="next">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M10 6l6 6-6 6z" />
+            </svg>
+        </span>
+    </div>
+    <span class="current-song" id="currentSong">Now Playing: </span>
 </div>
     <!-- B-container left empty -->
     <div class="b-container"></div>
-
-    <audio id="audioPlayer">
-        Your browser does not support the audio element.
-    </audio>
 
     <script type="module">
         import { allSongs } from './audioFiles.js';
@@ -129,9 +130,22 @@
             playPauseIcon.textContent = "⏸"; // Switch to Pause icon
         }
 
-       // Select the play and pause path elements
+     // Select elements
+const audioPlayer = document.getElementById("audioPlayer");
 const playPath = document.getElementById("play-path");
 const pausePath = document.getElementById("pause-path");
+const currentSongDisplay = document.getElementById("currentSong");
+
+let currentSongIndex = 0; // Keep track of the current song
+
+// Load the current song and update the display
+function loadCurrentSong() {
+    audioPlayer.src = allSongs[currentSongIndex];
+    currentSongDisplay.textContent = `Now Playing: ${allSongs[currentSongIndex].split('/').pop()}`;
+    audioPlayer.play();
+    playPath.style.display = "none";
+    pausePath.style.display = "block";
+}
 
 // Toggle Play/Pause functionality
 function togglePlayPause() {
@@ -146,8 +160,17 @@ function togglePlayPause() {
     }
 }
 
+// Automatically load the next song when the current one ends
+audioPlayer.addEventListener("ended", () => {
+    currentSongIndex = (currentSongIndex + 1) % allSongs.length;
+    loadCurrentSong();
+});
+
 // Event listener for Play/Pause toggle
 document.getElementById("play-pause").addEventListener("click", togglePlayPause);
+
+// Load the initial song
+loadCurrentSong();
     </script>
 </body>
 </html>
