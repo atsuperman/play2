@@ -293,14 +293,19 @@ const otherIcons = Array.from(document.querySelectorAll(".icon")).filter(
     icon => icon.id !== "search"
 );
 
-// Toggle search functionality
 let searchTimeout; // Timeout for auto-hide
 
+// Toggle search functionality
 searchIcon.addEventListener("click", () => {
     if (searchBoxContainer.style.display === "none" || !searchBoxContainer.style.display) {
         // Show search box
         searchBoxContainer.style.display = "block";
         searchBox.value = ""; // Reset the input box
+
+        // Hide other icons
+        otherIcons.forEach(icon => {
+            icon.style.display = "none";
+        });
 
         // Reset auto-hide timer
         resetSearchTimeout();
@@ -314,8 +319,10 @@ searchIcon.addEventListener("click", () => {
 function hideSearchBox() {
     searchBoxContainer.style.display = "none";
     searchBox.value = ""; // Reset the input box
+
+    // Show other icons
     otherIcons.forEach(icon => {
-        icon.style.display = "inline-block"; // Show all other icons
+        icon.style.display = "inline-block";
     });
 }
 
