@@ -12,7 +12,7 @@ const repo1Songs = [
 ];
 const repo2Songs = [
     { file: "Beer_song_Pacha_Kuthikennen.mp3", details: "Details: This is details for song1." },
-    { file: "song2.mp3", details: "Details: This is details for song2." }
+    { file: "Kaattumalli.mp3", details: "Details: This is details for song2." }
 ];
 
 // Combine all songs with their full paths and details
