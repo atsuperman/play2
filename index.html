@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -92,6 +92,26 @@
 }
   
   
+  #songQueue h4 {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+}
+
+#songList::-webkit-scrollbar {
+    width: 8px;
+}
+
+#songList::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 5px;
+}
+
+#songList::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+  
         @media screen and (max-width: 768px) {
             .a-container, .b-container {
                 width: 90%;
@@ -164,7 +184,13 @@
             <div id="songDetails" style="font-size: 14px; color: #007BFF;"></div>
         </div>
     </div>
+   <div id="songQueue" style="display: none; margin-top: 20px;">
+    <h4 style="margin-bottom: 10px; color: #555;">Coming Songs</h4>
+    <div id="songList" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; padding: 10px; background: #f9f9f9;">
+        <!-- Songs will be dynamically populated here -->
+    </div>
 </div>
+</div> 
       <audio id="audioPlayer">
         Your browser does not support the audio element.
     </audio>
@@ -303,6 +329,48 @@ document.getElementById("switch").addEventListener("click", () => {
     
     isSwitched = !isSwitched; // Toggle the state
 });
+  
+// Reference to the song queue container
+const songQueue = document.getElementById("songQueue");
+const songList = document.getElementById("songList");
+
+// Function to update the song queue
+function updateSongQueue() {
+    songList.innerHTML = ""; // Clear existing queue
+
+    // Get the next 100 songs (from the current index to 100 songs ahead)
+    const queue = allSongs.slice(currentSongIndex + 1, currentSongIndex + 101);
+
+    // Populate up to 7 songs for display
+    queue.slice(0, 7).forEach((song, index) => {
+        const songDiv = document.createElement("div");
+        songDiv.textContent = `${index + 1}. ${song.file.replace(".mp3", "").replace(/_/g, " ")}`;
+        songDiv.style.marginBottom = "5px";
+        songDiv.style.color = "#007BFF";
+        songDiv.style.cursor = "pointer";
+        songDiv.style.fontSize = "14px";
+
+        // Play the selected song when clicked
+        songDiv.addEventListener("click", () => {
+            currentSongIndex = allSongs.indexOf(song);
+            loadCurrentSong();
+            playCurrentSong();
+        });
+
+        songList.appendChild(songDiv);
+    });
+}
+
+// Toggle the song queue display
+document.getElementById("list").addEventListener("click", () => {
+    if (songQueue.style.display === "none" || !songQueue.style.display) {
+        songQueue.style.display = "block"; // Show the queue
+        updateSongQueue(); // Update the list
+    } else {
+        songQueue.style.display = "none"; // Hide the queue
+    }
+});
+  
     </script>
 </body>
 </html>
