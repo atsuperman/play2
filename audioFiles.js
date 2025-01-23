@@ -8,10 +8,10 @@ const repository2 = "https://github.com/atsuperman/PLAY/raw/refs/heads/main/";
 const repo1Songs = [
     { file: "Achacho.mp3", details: " This is details for Achacho song." },
     { file: "Edho Solla.mp3", details: " This is details for Achacho song." },
-    { file: "DIVINE.mp3", details: " This is details for DIVINE song." }
+    { file: "DIVIN test extra jeienkeiekmekekekE.mp3", details: " This is details for DIVINE song." }
 ];
 const repo2Songs = [
-    { file: "Beer_song_Pacha_Kuthikennen.mp3", details: "Details: This is details for song1." },
+    { file: "Beer_song_Pacha_Kuthikennen.mp3", details: "Details: This is extra button heo sksleo keleju details for song1." },
     { file: "Kaattumalli.mp3", details: "Details: This is details for song2." }
 ];
 
