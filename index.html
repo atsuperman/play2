@@ -235,6 +235,7 @@
   
 const searchIcon = document.getElementById("search");
 const searchBoxContainer = document.getElementById("searchBoxContainer");
+const searchBox = document.getElementById("searchBox");
 const otherIcons = Array.from(document.querySelectorAll(".icon")).filter(
     icon => icon.id !== "search"
 );
@@ -244,14 +245,16 @@ searchIcon.addEventListener("click", () => {
     if (searchBoxContainer.style.display === "none" || !searchBoxContainer.style.display) {
         // Show search box
         searchBoxContainer.style.display = "block";
+        searchBox.value = ""; // Reset the input box
 
         // Hide other icons
         otherIcons.forEach(icon => {
             icon.style.display = "none";
         });
     } else {
-        // Hide search box
+        // Hide search box and reset input
         searchBoxContainer.style.display = "none";
+        searchBox.value = ""; // Reset the input box
 
         // Show other icons
         otherIcons.forEach(icon => {
