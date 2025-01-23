@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -333,6 +333,7 @@ document.getElementById("switch").addEventListener("click", () => {
 // Reference to the song queue container and list
 const songQueue = document.getElementById("songQueue");
 const songList = document.getElementById("songList");
+let queueTimeout; // Timeout for auto-hide
 
 function updateSongQueue() {
     songList.innerHTML = ""; // Clear the existing queue
@@ -346,25 +347,45 @@ function updateSongQueue() {
         songDiv.textContent = `${index + 1}. ${song.file.replace(".mp3", "").replace(/_/g, " ")}`;
         songDiv.style.marginBottom = "5px";
         songDiv.style.color = "#007BFF";
-        songDiv.style.cursor = "default"; // Change cursor to indicate no interaction
+        songDiv.style.cursor = "default"; // No interaction
         songDiv.style.fontSize = "14px";
-
-        // No event listener for playing the song (disable click functionality)
 
         songList.appendChild(songDiv);
     });
 }
 
-// Toggle the song queue visibility
-document.getElementById("list").addEventListener("click", () => {
+// Function to toggle song queue visibility
+function toggleSongQueue() {
     if (songQueue.style.display === "none" || !songQueue.style.display) {
         songQueue.style.display = "block"; // Show the queue
         updateSongQueue(); // Update the list
+        resetQueueTimeout(); // Reset auto-hide timer
     } else {
         songQueue.style.display = "none"; // Hide the queue
     }
-});
+}
 
+// Hide song queue and reset timer
+function hideSongQueue() {
+    songQueue.style.display = "none";
+    clearTimeout(queueTimeout); // Clear auto-hide timer
+}
+
+// Auto-hide the queue after 30 seconds of inactivity
+function resetQueueTimeout() {
+    clearTimeout(queueTimeout); // Clear existing timer
+    queueTimeout = setTimeout(hideSongQueue, 30000); // Set 30-second timer
+}
+
+// Add click event listener to the list icon
+document.getElementById("list").addEventListener("click", toggleSongQueue);
+
+// Hide song queue if any other icon is clicked
+document.querySelectorAll(".icon").forEach(icon => {
+    if (icon.id !== "list") {
+        icon.addEventListener("click", hideSongQueue);
+    }
+});
 // Automatically update the queue when the song changes
 audioPlayer.addEventListener("ended", () => {
     playNextSong(); // Play the next song
