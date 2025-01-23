@@ -68,20 +68,6 @@
             transform: scale(1.2);
         }
 
-    #nextSongsContainer {
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
     
     
         @media screen and (max-width: 768px) {
@@ -158,14 +144,14 @@
     >
         Done
     </button>
-       <div id="nextSongsContainer" style="display: none; position: absolute; bottom: 10px; left: 5%; right: 5%; background-color: #fff; border: 1px solid #ccc; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); padding: 15px; z-index: 10; max-height: 200px; overflow-y: auto;">
-    <div style="text-align: right;">
-        <button id="closeNextSongs" style="background-color: #007BFF; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer;">Close</button>
+       
+</div>
+</div>
+     <!-- Upcoming songs list (Initially hidden) -->
+    <div id="upcomingSongsList" style="display: none; margin-top: 15px; font-size: 14px; color: #555;">
+        <h4>Coming Next:</h4>
+        <div id="upcomingSongs" style="margin-top: 10px;"></div>
     </div>
-    <h3 style="margin: 0; margin-bottom: 10px; font-size: 18px; color: #333; text-align: center;">Coming Next</h3>
-    <div id="nextSongsList" style="font-size: 14px; color: #555;"></div>
-</div>
-</div>
 </div>
       <audio id="audioPlayer">
         Your browser does not support the audio element.
@@ -374,6 +360,43 @@ function hideNextSongs() {
 // Add event listeners
 listIcon.addEventListener("click", showNextSongs);
 closeNextSongs.addEventListener("click", hideNextSongs);
+
+// Get references for the upcoming songs section and the "list" icon
+const listIcon = document.getElementById("list");
+const upcomingSongsList = document.getElementById("upcomingSongsList");
+const upcomingSongsContainer = document.getElementById("upcomingSongs");
+
+// Function to display upcoming songs
+function displayUpcomingSongs() {
+    // Clear the upcoming songs list
+    upcomingSongsContainer.innerHTML = "";
+
+    // Get the next 10 songs (after the current song)
+    const upcomingSongs = allSongs.slice(currentSongIndex + 1, currentSongIndex + 11);
+
+    // Check if there are any upcoming songs
+    if (upcomingSongs.length === 0) {
+        upcomingSongsContainer.innerHTML = "<p>No more songs in the queue.</p>";
+    } else {
+        // Add upcoming songs to the list
+        upcomingSongs.forEach((song, index) => {
+            const songItem = document.createElement("div");
+            songItem.innerHTML = `${index + 1}. ${song.file.replace(".mp3", "").replace(/_/g, " ")} - ${song.details}`;
+            songItem.style.marginBottom = "10px";
+            upcomingSongsContainer.appendChild(songItem);
+        });
+    }
+}
+
+// Toggle visibility of the upcoming songs list
+listIcon.addEventListener("click", () => {
+    if (upcomingSongsList.style.display === "none") {
+        displayUpcomingSongs(); // Show the list of upcoming songs
+        upcomingSongsList.style.display = "block";
+    } else {
+        upcomingSongsList.style.display = "none"; // Hide the list
+    }
+});
   
     </script>
 </body>
