@@ -68,6 +68,8 @@
             transform: scale(1.2);
         }
 
+    
+    
         @media screen and (max-width: 768px) {
             .a-container, .b-container {
                 width: 90%;
@@ -106,6 +108,11 @@
         <path d="M21.71 20.29l-5.37-5.37A7.92 7.92 0 0 0 18 10a8 8 0 1 0-8 8 7.92 7.92 0 0 0 4.92-1.66l5.37 5.37a1 1 0 0 0 1.42-1.42ZM10 16a6 6 0 1 1 6-6 6 6 0 0 1-6 6Z"></path>
     </svg>
 </span>
+           <span class="icon" id="list">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="#000000">
+        <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"></path>
+    </svg>
+</span>
 </div>
     </div>
     <!-- B-container left empty -->
@@ -137,60 +144,92 @@
     >
         Done
     </button>
+       
 </div>
+</div>
+     <!-- Upcoming songs list (Initially hidden) -->
+    <div id="upcomingSongsList" style="display: none; margin-top: 15px; font-size: 14px; color: #555;">
+        <h4>Coming Next:</h4>
+        <div id="upcomingSongs" style="margin-top: 10px;"></div>
+    </div>
 </div>
       <audio id="audioPlayer">
         Your browser does not support the audio element.
     </audio>
 
-    <script type="module">
-        import { allSongs } from './audioFiles.js';
+ <script type="module">
+    import { allSongs } from './audioFiles.js';
 
-        let currentSongIndex = 0; // Keep track of the current song
-        const audioPlayer = document.getElementById("audioPlayer");
-        const playPath = document.getElementById("play-path");
-        const pausePath = document.getElementById("pause-path");
-        const currentSongDisplay = document.getElementById("currentSong");
+    let currentSongIndex = 0; // Track the current song
+    const audioPlayer = document.getElementById("audioPlayer");
+    const playPath = document.getElementById("play-path");
+    const pausePath = document.getElementById("pause-path");
+    const currentSongDisplay = document.getElementById("currentSong");
 
-        // Load the current song and update display
-        function loadCurrentSong() {
-    const song = allSongs[currentSongIndex];
-    audioPlayer.src = song.path;
-    const currentSongName = song.file.replace(".mp3", "").replace(/_/g, " ");
-document.getElementById("currentSongName").textContent = currentSongName;
-          
-    // Display the song details
-    document.getElementById("songDetails").textContent = song.details;
-
-    audioPlayer.play();
-    playPath.style.display = "none";
-    pausePath.style.display = "block";
-}
-
-        // Toggle Play/Pause functionality
-        function togglePlayPause() {
-            if (audioPlayer.paused) {
-                audioPlayer.play();
-                playPath.style.display = "none";
-                pausePath.style.display = "block";
-            } else {
-                audioPlayer.pause();
-                playPath.style.display = "block";
-                pausePath.style.display = "none";
-            }
+    // Shuffle the playlist
+    function shuffleSongs() {
+        for (let i = allSongs.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allSongs[i], allSongs[j]] = [allSongs[j], allSongs[i]];
         }
+    }
 
-        // Automatically load the next song when the current one ends
-        audioPlayer.addEventListener("ended", () => {
-            currentSongIndex = (currentSongIndex + 1) % allSongs.length;
-            loadCurrentSong();
-        });
+    // Load the current song
+    function loadCurrentSong() {
+        const song = allSongs[currentSongIndex];
+        audioPlayer.src = song.path;
+        const currentSongName = song.file.replace(".mp3", "").replace(/_/g, " ");
+        document.getElementById("currentSongName").textContent = currentSongName;
+        document.getElementById("songDetails").textContent = song.details;
+    }
 
-        // Event listener for Play/Pause toggle
-        document.getElementById("play-pause").addEventListener("click", togglePlayPause);
+    // Start playback of the current song
+    function playCurrentSong() {
+        audioPlayer.play();
+        playPath.style.display = "none";
+        pausePath.style.display = "block";
+    }
 
-        // Load the initial song
+    // Pause playback
+    function pauseCurrentSong() {
+        audioPlayer.pause();
+        playPath.style.display = "block";
+        pausePath.style.display = "none";
+    }
+
+    // Toggle Play/Pause
+    function togglePlayPause() {
+        if (audioPlayer.paused) {
+            playCurrentSong();
+        } else {
+            pauseCurrentSong();
+        }
+    }
+
+    // Advance to the next song
+    function playNextSong() {
+        currentSongIndex++;
+        if (currentSongIndex >= allSongs.length) {
+            shuffleSongs(); // Shuffle the playlist again
+            currentSongIndex = 0; // Restart from the first song
+        }
         loadCurrentSong();
+        playCurrentSong();
+    }
+
+    // Event listener for the Play/Pause toggle
+    document.getElementById("play-pause").addEventListener("click", () => {
+        if (!audioPlayer.src) {
+            loadCurrentSong(); // Load the first song on initial Play click
+        }
+        togglePlayPause();
+    });
+
+    // Automatically play the next song when the current one ends
+    audioPlayer.addEventListener("ended", playNextSong);
+
+    // Shuffle songs on page load
+    shuffleSongs();
   
   // Get references to the search icon, search box container, and done button
 const searchIcon = document.getElementById("search");
@@ -281,6 +320,7 @@ resultItem.addEventListener("click", () => {
 
 // Event listener for real-time search
 searchBox.addEventListener("input", searchSongs);
+  
   
   
     </script>
