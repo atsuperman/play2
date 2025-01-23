@@ -82,7 +82,16 @@
             box-sizing: border-box;
         }
     
-    
+#switch {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+#toggle {
+    transition: cx 0.3s ease;
+}
+  
+  
         @media screen and (max-width: 768px) {
             .a-container, .b-container {
                 width: 90%;
@@ -126,8 +135,15 @@
         <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"></path>
     </svg>
 </span>
+       <span class="icon" id="switch">
+    <svg width="50" height="24" viewBox="0 0 50 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="50" height="24" rx="12" fill="#E0E0E0"/>
+        <circle id="toggle" cx="6" cy="12" r="6" fill="#000000"/>
+    </svg>
+</span>
             <div id="searchBoxContainer">
             <input type="text" id="searchBox" placeholder="Search songs..." />
+              
         </div>
 </div>
       
@@ -280,6 +296,19 @@ searchIcon.addEventListener("click", () => {
     }
 });
   
+let isSwitched = false; // Track the switch position
+
+document.getElementById("switch").addEventListener("click", () => {
+    const toggle = document.getElementById("toggle");
+    
+    if (isSwitched) {
+        toggle.setAttribute("cx", "6"); // Move toggle to the left
+    } else {
+        toggle.setAttribute("cx", "44"); // Move toggle to the right
+    }
+    
+    isSwitched = !isSwitched; // Toggle the state
+});
     </script>
 </body>
 </html>
