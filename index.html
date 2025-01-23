@@ -112,32 +112,6 @@
     background: #aaa;
 }
   
-   /* Add this CSS within the existing <style> block */
-.song-container {
-    display: flex;
-    align-items: center;
-    overflow-x: auto; 
-    white-space: nowrap; 
-}
-
-.song-item {
-    display: inline-block;
-    margin-right: 20px; 
-    cursor: pointer;
-}
-
-.details {
-    max-width: 200px; 
-    overflow: hidden;
-    text-overflow: ellipsis; 
-}
-
-.full-details {
-    display: none; 
-    margin-top: 5px;
-}
- 
-    
         @media screen and (max-width: 768px) {
             .a-container, .b-container {
                 width: 90%;
@@ -196,17 +170,20 @@
     </div>
     <!-- B-container left empty -->
  <div class="b-container">
-    <div class="song-container"> 
-    <div class="song-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="#007BFF" style="margin-right: 5px;">
-            <path d="M12 3v18l9-9-9-9zm-9 9h7v-2H3v2zm0 4h7v-2H3v2zm0-8h7V7H3v2z"></path>
-        </svg>
-        <div id="currentSongName" style="font-weight: bold; color: #007BFF;"></div> 
-        <span class="details" id="currentSongDetails"></span> 
-        <span class="full-details" id="fullSongDetails"></span> 
+    <div id="currentSong">
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#007BFF" style="margin-right: 5px;">
+                <path d="M12 3v18l9-9-9-9zm-9 9h7v-2H3v2zm0 4h7v-2H3v2zm0-8h7V7H3v2z"></path>
+            </svg>
+            <div id="currentSongName" style="font-weight: bold; color: #007BFF;"></div>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#555" style="margin-right: 5px;">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z"></path>
+            </svg>
+            <div id="songDetails" style="font-size: 14px; color: #007BFF;"></div>
+        </div>
     </div>
-</div>
-
    <div id="songQueue" style="display: none; margin-top: 20px;">
     <h4 style="margin-bottom: 10px; color: #555;">Coming Songs</h4>
     <div id="songList" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; padding: 10px; background: #f9f9f9;">
@@ -228,24 +205,6 @@ let isPlaying = false;  // Track if the song is currently playing
     const pausePath = document.getElementById("pause-path");
     const currentSongDisplay = document.getElementById("currentSong");
 
-  // Add this script within the existing <script> block
-
-const songItem = document.querySelector('.song-item'); 
-const details = document.getElementById("currentSongDetails"); 
-const fullDetails = document.getElementById("fullSongDetails");
-
-songItem.addEventListener('click', () => {
-    if (fullDetails.style.display === 'none') {
-        fullDetails.style.display = 'block';
-        details.style.display = 'none'; 
-    } else {
-        fullDetails.style.display = 'none';
-        details.style.display = 'block'; 
-    }
-});
-  
-    
-    
     // Shuffle the playlist
     function shuffleSongs() {
         for (let i = allSongs.length - 1; i > 0; i--) {
