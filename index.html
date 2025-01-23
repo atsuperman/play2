@@ -334,7 +334,6 @@ document.getElementById("switch").addEventListener("click", () => {
 const songQueue = document.getElementById("songQueue");
 const songList = document.getElementById("songList");
 
-// Function to update the song queue dynamically
 function updateSongQueue() {
     songList.innerHTML = ""; // Clear the existing queue
 
@@ -347,15 +346,10 @@ function updateSongQueue() {
         songDiv.textContent = `${index + 1}. ${song.file.replace(".mp3", "").replace(/_/g, " ")}`;
         songDiv.style.marginBottom = "5px";
         songDiv.style.color = "#007BFF";
-        songDiv.style.cursor = "pointer";
+        songDiv.style.cursor = "default"; // Change cursor to indicate no interaction
         songDiv.style.fontSize = "14px";
 
-        // Add click functionality to play the selected song
-        songDiv.addEventListener("click", () => {
-            currentSongIndex = allSongs.indexOf(song); // Update the current song index
-            loadCurrentSong(); // Load the selected song
-            playCurrentSong(); // Play the song
-        });
+        // No event listener for playing the song (disable click functionality)
 
         songList.appendChild(songDiv);
     });
