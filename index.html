@@ -112,28 +112,6 @@
     background: #aaa;
 }
   
-  #searchResults {
-    display: none; /* Initially hidden */
-    background: #f9f9f9;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 10px;
-    padding: 10px;
-    box-sizing: border-box;
-}
-
-#searchResults div {
-    font-size: 14px;
-    color: #333;
-    margin-bottom: 10px;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-  
         @media screen and (max-width: 768px) {
             .a-container, .b-container {
                 width: 90%;
@@ -183,7 +161,7 @@
         <circle id="toggle" cx="6" cy="12" r="6" fill="#000000"/>
     </svg>
 </span>
-            <div id="searchBoxContainer"><div id="searchResults"></div>
+            <div id="searchBoxContainer">
             <input type="text" id="searchBox" placeholder="Search songs..." />
               
         </div>
@@ -311,24 +289,11 @@ document.getElementById("next").addEventListener("click", () => {
 const searchIcon = document.getElementById("search");
 const searchBoxContainer = document.getElementById("searchBoxContainer");
 const searchBox = document.getElementById("searchBox");
-const searchResults = document.createElement("div"); // Create search results container
-searchResults.id = "searchResults"; // Assign an ID for styling and access
-searchResults.style.display = "none"; // Initially hidden
-searchBoxContainer.insertBefore(searchResults, searchBox); // Add above the search box
-
 const otherIcons = Array.from(document.querySelectorAll(".icon")).filter(
     icon => icon.id !== "search"
 );
 
 let searchTimeout; // Timeout for auto-hide
-
-// Song data (example structure)
-const allSongs = [
-    { file: "song_one.mp3", details: "Artist: Example 1, Album: Album 1" },
-    { file: "song_two.mp3", details: "Artist: Example 2, Album: Album 2" },
-    { file: "another_song.mp3", details: "Artist: Example 3, Album: Album 3" },
-    // Add more songs here
-];
 
 // Toggle search functionality
 searchIcon.addEventListener("click", () => {
@@ -336,7 +301,6 @@ searchIcon.addEventListener("click", () => {
         // Show search box
         searchBoxContainer.style.display = "block";
         searchBox.value = ""; // Reset the input box
-        searchResults.style.display = "none"; // Clear previous results
 
         // Hide other icons
         otherIcons.forEach(icon => {
@@ -355,7 +319,6 @@ searchIcon.addEventListener("click", () => {
 function hideSearchBox() {
     searchBoxContainer.style.display = "none";
     searchBox.value = ""; // Reset the input box
-    searchResults.style.display = "none"; // Hide results
 
     // Show other icons
     otherIcons.forEach(icon => {
@@ -373,53 +336,9 @@ function resetSearchTimeout() {
     }, 30000); // 30-second timer
 }
 
-// Trigger search results on user input
-searchBox.addEventListener("input", () => {
-    resetSearchTimeout(); // Reset auto-hide timer
-    updateSearchResults(); // Update search results
-});
-
-// Function to filter and display results
-function updateSearchResults() {
-    const query = searchBox.value.trim().toLowerCase(); // Get user input
-    searchResults.innerHTML = ""; // Clear previous results
-
-    if (!query) {
-        searchResults.style.display = "none"; // Hide results if input is empty
-        return;
-    }
-
-    // Filter songs based on the query
-    const matchedSongs = allSongs.filter(song =>
-        song.file.toLowerCase().includes(query) || song.details.toLowerCase().includes(query)
-    );
-
-    if (matchedSongs.length > 0) {
-        // Populate matched songs
-        matchedSongs.forEach(song => {
-            const resultDiv = document.createElement("div");
-            resultDiv.innerHTML = `
-                <strong>${song.file.replace(".mp3", "").replace(/_/g, " ")}</strong><br>
-                <span>${song.details}</span>
-            `;
-            resultDiv.style.whiteSpace = "nowrap";
-            resultDiv.style.overflow = "hidden";
-            resultDiv.style.textOverflow = "ellipsis";
-            searchResults.appendChild(resultDiv);
-        });
-
-        searchResults.style.display = "block"; // Show results
-    } else {
-        searchResults.style.display = "none"; // Hide if no matches
-    }
-}
-
-// Hide results when the search box loses focus and input is empty
-searchBox.addEventListener("blur", () => {
-    setTimeout(() => {
-        if (!searchBox.value.trim()) searchResults.style.display = "none";
-    }, 200);
-});
+// Reset the timer whenever the user types
+searchBox.addEventListener("input", resetSearchTimeout);
+  
 let isSwitched = false; // Track the switch position
 
 document.getElementById("switch").addEventListener("click", () => {
