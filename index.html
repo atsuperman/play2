@@ -68,6 +68,22 @@
             transform: scale(1.2);
         }
 
+    #nextSongsContainer {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    
+    
         @media screen and (max-width: 768px) {
             .a-container, .b-container {
                 width: 90%;
@@ -142,6 +158,13 @@
     >
         Done
     </button>
+       <div id="nextSongsContainer" style="display: none; position: absolute; bottom: 10px; left: 5%; right: 5%; background-color: #fff; border: 1px solid #ccc; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); padding: 15px; z-index: 10; max-height: 200px; overflow-y: auto;">
+    <div style="text-align: right;">
+        <button id="closeNextSongs" style="background-color: #007BFF; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer;">Close</button>
+    </div>
+    <h3 style="margin: 0; margin-bottom: 10px; font-size: 18px; color: #333; text-align: center;">Coming Next</h3>
+    <div id="nextSongsList" style="font-size: 14px; color: #555;"></div>
+</div>
 </div>
 </div>
       <audio id="audioPlayer">
@@ -312,6 +335,45 @@ resultItem.addEventListener("click", () => {
 // Event listener for real-time search
 searchBox.addEventListener("input", searchSongs);
   
+    // Get references to the list icon, next songs container, close button, and list
+const listIcon = document.getElementById("list");
+const nextSongsContainer = document.getElementById("nextSongsContainer");
+const closeNextSongs = document.getElementById("closeNextSongs");
+const nextSongsList = document.getElementById("nextSongsList");
+
+// Show the next 10 songs
+function showNextSongs() {
+    // Clear any previous content
+    nextSongsList.innerHTML = "";
+
+    // Determine the next 10 songs
+    const upcomingSongs = allSongs.slice(currentSongIndex + 1, currentSongIndex + 11);
+
+    // Populate the list
+    if (upcomingSongs.length > 0) {
+        upcomingSongs.forEach((song, index) => {
+            const songItem = document.createElement("div");
+            songItem.innerHTML = `<strong>${index + 1}. ${song.file.replace(".mp3", "").replace(/_/g, " ")}</strong>
+            <br>${song.details}`;
+            songItem.style.marginBottom = "10px";
+            nextSongsList.appendChild(songItem);
+        });
+    } else {
+        nextSongsList.innerHTML = "<p style='color: #999; text-align: center;'>No more songs in the queue.</p>";
+    }
+
+    // Display the container
+    nextSongsContainer.style.display = "block";
+}
+
+// Hide the next songs container
+function hideNextSongs() {
+    nextSongsContainer.style.display = "none";
+}
+
+// Add event listeners
+listIcon.addEventListener("click", showNextSongs);
+closeNextSongs.addEventListener("click", hideNextSongs);
   
     </script>
 </body>
