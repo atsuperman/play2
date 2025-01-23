@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -179,22 +179,44 @@ let isPlaying = false;  // Track if the song is currently playing
     const pausePath = document.getElementById("pause-path");
     const currentSongDisplay = document.getElementById("currentSong");
 
-    // Shuffle the playlist
-    function shuffleSongs() {
-        for (let i = allSongs.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [allSongs[i], allSongs[j]] = [allSongs[j], allSongs[i]];
-        }
+    let isSwitched = false; // Track the switch position
+let allSongsModule = './audioFiles.js'; // Default module
+
+document.getElementById("switch").addEventListener("click", async () => {
+    const toggle = document.getElementById("toggle");
+
+    if (isSwitched) {
+        toggle.setAttribute("cx", "6"); // Move toggle to the left
+        allSongsModule = './audioFiles.js'; // Switch to default
+    } else {
+        toggle.setAttribute("cx", "44"); // Move toggle to the right
+        allSongsModule = './audioFiles1.js'; // Switch to alternative
     }
 
-    // Load the current song
-    function loadCurrentSong() {
-        const song = allSongs[currentSongIndex];
-        audioPlayer.src = song.path;
-        const currentSongName = song.file.replace(".mp3", "").replace(/_/g, " ");
-        document.getElementById("currentSongName").textContent = currentSongName;
-        document.getElementById("songDetails").textContent = song.details;
+    // Dynamically import the selected audio file module
+    const { allSongs } = await import(allSongsModule);
+
+    // Update allSongs with the new module's songs
+    shuffleSongs(allSongs); // Shuffle the new song list
+    loadCurrentSong(allSongs); // Load the first song in the new list
+    isSwitched = !isSwitched; // Toggle the state
+});
+
+// Update shuffle and load functions to accept allSongs
+function shuffleSongs(songs) {
+    for (let i = songs.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [songs[i], songs[j]] = [songs[j], songs[i]];
     }
+}
+
+function loadCurrentSong(songs) {
+    const song = songs[currentSongIndex];
+    audioPlayer.src = song.path;
+    const currentSongName = song.file.replace(".mp3", "").replace(/_/g, " ");
+    document.getElementById("currentSongName").textContent = currentSongName;
+    document.getElementById("songDetails").textContent = song.details;
+}
 
     // Start playback of the current song
     function playCurrentSong() {
