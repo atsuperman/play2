@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -179,26 +179,31 @@ let isPlaying = false;  // Track if the song is currently playing
     const pausePath = document.getElementById("pause-path");
     const currentSongDisplay = document.getElementById("currentSong");
 
-    let isSwitched = false; // Track the switch position
-let allSongsModule = './audioFiles.js'; // Default module
+    let isSwitched = false; // Track the switch state
+let allSongs = []; // Store the current song list dynamically
+
+async function loadSongsFromFile(fileName) {
+    try {
+        const module = await import(`./${fileName}`);
+        allSongs = module.allSongs;
+        shuffleSongs(); // Shuffle the songs after loading
+        loadCurrentSong(); // Load the first song from the new file
+    } catch (error) {
+        console.error(`Error loading songs from ${fileName}:`, error);
+    }
+}
 
 document.getElementById("switch").addEventListener("click", async () => {
     const toggle = document.getElementById("toggle");
 
     if (isSwitched) {
         toggle.setAttribute("cx", "6"); // Move toggle to the left
-        allSongsModule = './audioFiles.js'; // Switch to default
+        await loadSongsFromFile("audioFiles.js"); // Load default songs
     } else {
         toggle.setAttribute("cx", "44"); // Move toggle to the right
-        allSongsModule = './audioFiles1.js'; // Switch to alternative
+        await loadSongsFromFile("audioFiles1.js"); // Load alternate songs
     }
 
-    // Dynamically import the selected audio file module
-    const { allSongs } = await import(allSongsModule);
-
-    // Update allSongs with the new module's songs
-    shuffleSongs(allSongs); // Shuffle the new song list
-    loadCurrentSong(allSongs); // Load the first song in the new list
     isSwitched = !isSwitched; // Toggle the state
 });
 
