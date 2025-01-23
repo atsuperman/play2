@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -342,16 +342,16 @@ function updateSongQueue() {
     const queue = allSongs.slice(currentSongIndex + 1, currentSongIndex + 101);
 
     // Display up to 7 songs at a time
-    queue.slice(0, 7).forEach((song, index) => {
-        const songDiv = document.createElement("div");
-        songDiv.textContent = `${index + 1}. ${song.file.replace(".mp3", "").replace(/_/g, " ")}`;
-        songDiv.style.marginBottom = "5px";
-        songDiv.style.color = "#007BFF";
-        songDiv.style.cursor = "default"; // No interaction
-        songDiv.style.fontSize = "14px";
+    queue.slice(0, 7).forEach((song) => {
+    const songDiv = document.createElement("div");
+    songDiv.textContent = `• ${song.file.replace(".mp3", "").replace(/_/g, " ")}`;
+    songDiv.style.marginBottom = "5px";
+    songDiv.style.color = "#007BFF";
+    songDiv.style.cursor = "default"; // No interaction
+    songDiv.style.fontSize = "14px";
 
-        songList.appendChild(songDiv);
-    });
+    songList.appendChild(songDiv);
+});
 }
 
 // Function to toggle song queue visibility
