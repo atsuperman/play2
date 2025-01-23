@@ -294,27 +294,43 @@ const otherIcons = Array.from(document.querySelectorAll(".icon")).filter(
 );
 
 // Toggle search functionality
+let searchTimeout; // Timeout for auto-hide
+
 searchIcon.addEventListener("click", () => {
     if (searchBoxContainer.style.display === "none" || !searchBoxContainer.style.display) {
         // Show search box
         searchBoxContainer.style.display = "block";
         searchBox.value = ""; // Reset the input box
 
-        // Hide other icons
-        otherIcons.forEach(icon => {
-            icon.style.display = "none";
-        });
+        // Reset auto-hide timer
+        resetSearchTimeout();
     } else {
         // Hide search box and reset input
-        searchBoxContainer.style.display = "none";
-        searchBox.value = ""; // Reset the input box
-
-        // Show other icons
-        otherIcons.forEach(icon => {
-            icon.style.display = "inline-block";
-        });
+        hideSearchBox();
     }
 });
+
+// Function to hide the search box
+function hideSearchBox() {
+    searchBoxContainer.style.display = "none";
+    searchBox.value = ""; // Reset the input box
+    otherIcons.forEach(icon => {
+        icon.style.display = "inline-block"; // Show all other icons
+    });
+}
+
+// Reset the auto-hide timer for the search box
+function resetSearchTimeout() {
+    clearTimeout(searchTimeout); // Clear existing timer
+    searchTimeout = setTimeout(() => {
+        if (!searchBox.value.trim()) { // Hide only if input is empty
+            hideSearchBox();
+        }
+    }, 30000); // 30-second timer
+}
+
+// Reset the timer whenever the user types
+searchBox.addEventListener("input", resetSearchTimeout);
   
 let isSwitched = false; // Track the switch position
 
