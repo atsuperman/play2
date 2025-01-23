@@ -290,19 +290,40 @@ searchIcon.addEventListener("click", () => {
     }
 });
   
-let isSwitched = false; // Track the switch position
+  let isSwitched = false; // Track the switch position
+let allSongs = []; // Dynamically store the current playlist
 
-document.getElementById("switch").addEventListener("click", () => {
+// Function to dynamically load songs from the specified file
+async function loadSongsFromFile(fileName) {
+    try {
+        const module = await import(`./${fileName}`);
+        allSongs = module.allSongs;
+        shuffleSongs(); // Shuffle the songs after loading
+        currentSongIndex = 0; // Reset to the first song
+        loadCurrentSong(); // Load the first song
+        if (isPlaying) {
+            playCurrentSong(); // Continue playing if already playing
+        }
+    } catch (error) {
+        console.error(`Error loading ${fileName}:`, error);
+    }
+}
+
+// Event listener for the switch toggle
+document.getElementById("switch").addEventListener("click", async () => {
     const toggle = document.getElementById("toggle");
-    
+
     if (isSwitched) {
         toggle.setAttribute("cx", "6"); // Move toggle to the left
+        await loadSongsFromFile("audioFiles.js"); // Load default songs
     } else {
         toggle.setAttribute("cx", "44"); // Move toggle to the right
+        await loadSongsFromFile("audioFiles1.js"); // Load alternate songs
     }
-    
+
     isSwitched = !isSwitched; // Toggle the state
 });
+  
     </script>
 </body>
 </html>
