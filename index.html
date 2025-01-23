@@ -68,6 +68,19 @@
             transform: scale(1.2);
         }
 
+        #searchBoxContainer {
+            display: none;
+            transition: width 0.3s ease;
+        }
+
+        #searchBox {
+            width: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            box-sizing: border-box;
+        }
     
     
         @media screen and (max-width: 768px) {
@@ -113,7 +126,11 @@
         <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"></path>
     </svg>
 </span>
+            <div id="searchBoxContainer">
+            <input type="text" id="searchBox" placeholder="Search songs..." />
+        </div>
 </div>
+      
     </div>
     <!-- B-container left empty -->
  <div class="b-container">
@@ -131,21 +148,6 @@
             <div id="songDetails" style="font-size: 14px; color: #007BFF;"></div>
         </div>
     </div>
-   <div id="searchBoxContainer" style="display: none; margin-top: 10px;">
-    <input
-        type="text"
-        id="searchBox"
-        placeholder="Search songs..."
-        style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;"
-    />
-    <button
-        id="doneButton"
-        style="margin-top: 10px; width: 100%; padding: 10px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;"
-    >
-        Done
-    </button>
-       
-</div>
 </div>
      <!-- Upcoming songs list (Initially hidden) -->
     <div id="upcomingSongsList" style="display: none; margin-top: 15px; font-size: 14px; color: #555;">
@@ -231,97 +233,32 @@
     // Shuffle songs on page load
     shuffleSongs();
   
-  // Get references to the search icon, search box container, and done button
 const searchIcon = document.getElementById("search");
 const searchBoxContainer = document.getElementById("searchBoxContainer");
-const doneButton = document.getElementById("doneButton");
+const otherIcons = Array.from(document.querySelectorAll(".icon")).filter(
+    icon => icon.id !== "search"
+);
 
-// Toggle search box visibility when the search icon is clicked
+// Toggle search functionality
 searchIcon.addEventListener("click", () => {
-    if (searchBoxContainer.style.display === "none") {
+    if (searchBoxContainer.style.display === "none" || !searchBoxContainer.style.display) {
+        // Show search box
         searchBoxContainer.style.display = "block";
+
+        // Hide other icons
+        otherIcons.forEach(icon => {
+            icon.style.display = "none";
+        });
     } else {
+        // Hide search box
         searchBoxContainer.style.display = "none";
-    }
-});
 
-// Hide search box when the done button is clicked
-doneButton.addEventListener("click", () => {
-    searchBoxContainer.style.display = "none";
-});
-  
-  // Add search functionality
-const searchBox = document.getElementById("searchBox");
-
-// Function to filter songs and display results
-function searchSongs() {
-    const query = searchBox.value.toLowerCase();
-    const searchResults = allSongs.filter(song =>
-        song.file.toLowerCase().includes(query) || song.details.toLowerCase().includes(query)
-    );
-
-    // Display results in the search box container
-    const resultsContainer = document.createElement("div");
-    resultsContainer.id = "resultsContainer";
-    resultsContainer.style.marginTop = "10px";
-
-    // Clear previous results
-    if (document.getElementById("resultsContainer")) {
-        document.getElementById("resultsContainer").remove();
-    }
-
-    // Add new results
-    searchResults.forEach((song, index) => {
-        const resultItem = document.createElement("div");
-        resultItem.textContent = `${index + 1}. ${song.file} - ${song.details}`;
-        resultItem.style.padding = "5px";
-        resultItem.style.border = "1px solid #ccc";
-        resultItem.style.borderRadius = "3px";
-        resultItem.style.marginBottom = "5px";
-        resultItem.style.cursor = "pointer";
-        resultItem.style.backgroundColor = "#f9f9f9";
-
-        // Highlight result on hover
-        resultItem.addEventListener("mouseover", () => {
-            resultItem.style.backgroundColor = "#e0e0e0";
+        // Show other icons
+        otherIcons.forEach(icon => {
+            icon.style.display = "inline-block";
         });
-        resultItem.addEventListener("mouseout", () => {
-            resultItem.style.backgroundColor = "#f9f9f9";
-        });
-
-      // Queue selected song as the next one on click
-resultItem.addEventListener("click", () => {
-    // Set the selected song as the next song in the queue
-    const selectedIndex = allSongs.findIndex(s => s.file === song.file);
-    if (selectedIndex !== -1) {
-        currentSongIndex = selectedIndex;
     }
-
-    // Hide the search box
-    searchBoxContainer.style.display = "none";
-
-    // Remove the selected result from resultsContainer
-    resultItem.style.display = "none";
-
-    // Add the song info below the current song
-    const selectedSongInfo = document.createElement("div");
-    selectedSongInfo.textContent = `Queued: ${song.file.replace(".mp3", "").replace(/_/g, " ")} - ${song.details}`;
-    selectedSongInfo.style.marginTop = "10px";
-    selectedSongInfo.style.color = "#555";
-    currentSongDisplay.appendChild(selectedSongInfo);
 });
-
-        resultsContainer.appendChild(resultItem);
-    });
-
-    // Append results to the search box container
-    searchBoxContainer.appendChild(resultsContainer);
-}
-
-// Event listener for real-time search
-searchBox.addEventListener("input", searchSongs);
-  
-  
   
     </script>
 </body>
