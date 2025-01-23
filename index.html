@@ -162,6 +162,7 @@
  <script type="module">
     import { allSongs } from './audioFiles.js';
 
+let isPlaying = false;  // Track if the song is currently playing
     let currentSongIndex = 0; // Track the current song
     const audioPlayer = document.getElementById("audioPlayer");
     const playPath = document.getElementById("play-path");
@@ -200,13 +201,29 @@
     }
 
     // Toggle Play/Pause
-    function togglePlayPause() {
-        if (audioPlayer.paused) {
-            playCurrentSong();
-        } else {
-            pauseCurrentSong();
-        }
+function togglePlayPause() {
+    if (audioPlayer.paused) {
+        playCurrentSong();
+        isPlaying = true;  // Mark as playing
+    } else {
+        pauseCurrentSong();
+        isPlaying = false;  // Mark as paused
     }
+}
+
+// Event listener for the Next button
+document.getElementById("next").addEventListener("click", () => {
+    if (isPlaying) {
+        playNextSong();  // Play next song only if already playing
+    } else {
+        currentSongIndex++; // Just move to the next song, but don't play yet
+        if (currentSongIndex >= allSongs.length) {
+            shuffleSongs();  // Shuffle the playlist again
+            currentSongIndex = 0;  // Restart from the first song
+        }
+        loadCurrentSong();  // Load the next song details
+    }
+});
 
     // Advance to the next song
     function playNextSong() {
