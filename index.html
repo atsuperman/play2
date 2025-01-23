@@ -290,22 +290,59 @@ searchIcon.addEventListener("click", () => {
     }
 });
   
-  let isSwitched = false; // Track the switch position
-let allSongs = []; // Dynamically store the current playlist
+  let isSwitched = false; // Track if the switch is toggled
+let allSongs = []; // Store the active playlist dynamically
+let currentSongIndex = 0; // Current song index
+let isPlaying = false; // Track if a song is playing
 
-// Function to dynamically load songs from the specified file
+const audioPlayer = document.getElementById("audioPlayer");
+const playPath = document.getElementById("play-path");
+const pausePath = document.getElementById("pause-path");
+
+// Function to load songs from the given file
 async function loadSongsFromFile(fileName) {
     try {
         const module = await import(`./${fileName}`);
-        allSongs = module.allSongs;
-        shuffleSongs(); // Shuffle the songs after loading
+        allSongs = module.allSongs; // Dynamically set the playlist
+        shuffleSongs(); // Shuffle songs after loading
         currentSongIndex = 0; // Reset to the first song
         loadCurrentSong(); // Load the first song
         if (isPlaying) {
             playCurrentSong(); // Continue playing if already playing
         }
     } catch (error) {
-        console.error(`Error loading ${fileName}:`, error);
+        console.error(`Error loading songs from ${fileName}:`, error);
+    }
+}
+
+// Function to load the current song
+function loadCurrentSong() {
+    if (!allSongs.length) return; // Avoid errors if no songs are loaded
+    const song = allSongs[currentSongIndex];
+    audioPlayer.src = song.path;
+    document.getElementById("currentSongName").textContent = song.file.replace(".mp3", "").replace(/_/g, " ");
+    document.getElementById("songDetails").textContent = song.details;
+}
+
+// Function to play the current song
+function playCurrentSong() {
+    audioPlayer.play();
+    playPath.style.display = "none";
+    pausePath.style.display = "block";
+}
+
+// Function to pause the current song
+function pauseCurrentSong() {
+    audioPlayer.pause();
+    playPath.style.display = "block";
+    pausePath.style.display = "none";
+}
+
+// Shuffle the playlist
+function shuffleSongs() {
+    for (let i = allSongs.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allSongs[i], allSongs[j]] = [allSongs[j], allSongs[i]];
     }
 }
 
@@ -315,15 +352,57 @@ document.getElementById("switch").addEventListener("click", async () => {
 
     if (isSwitched) {
         toggle.setAttribute("cx", "6"); // Move toggle to the left
-        await loadSongsFromFile("audioFiles.js"); // Load default songs
+        await loadSongsFromFile("audioFiles.js"); // Load default playlist
     } else {
         toggle.setAttribute("cx", "44"); // Move toggle to the right
-        await loadSongsFromFile("audioFiles1.js"); // Load alternate songs
+        await loadSongsFromFile("audioFiles1.js"); // Load alternate playlist
     }
 
     isSwitched = !isSwitched; // Toggle the state
 });
-  
+
+// Event listener for Play/Pause toggle
+document.getElementById("play-pause").addEventListener("click", () => {
+    if (!audioPlayer.src) {
+        loadCurrentSong(); // Load the first song if not loaded
+    }
+    if (audioPlayer.paused) {
+        playCurrentSong();
+        isPlaying = true;
+    } else {
+        pauseCurrentSong();
+        isPlaying = false;
+    }
+});
+
+// Event listener for Next button
+document.getElementById("next").addEventListener("click", () => {
+    currentSongIndex++;
+    if (currentSongIndex >= allSongs.length) {
+        shuffleSongs(); // Shuffle the playlist when reaching the end
+        currentSongIndex = 0;
+    }
+    loadCurrentSong();
+    if (isPlaying) {
+        playCurrentSong();
+    }
+});
+
+// Automatically play the next song when the current one ends
+audioPlayer.addEventListener("ended", () => {
+    currentSongIndex++;
+    if (currentSongIndex >= allSongs.length) {
+        shuffleSongs();
+        currentSongIndex = 0;
+    }
+    loadCurrentSong();
+    playCurrentSong();
+});
+
+// Load the default playlist on page load
+(async () => {
+    await loadSongsFromFile("audioFiles.js"); // Default playlist
+})();
     </script>
 </body>
 </html>
