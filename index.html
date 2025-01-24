@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -406,12 +406,21 @@ searchBox.addEventListener("input", resetSearchTimeout);
 
 // Function to filter songs based on search input
 function filterSongs(query) {
+    // Filter songs based on the query
     const filteredSongs = allSongs.filter(song => 
         song.file.toLowerCase().includes(query.toLowerCase()) || 
         song.details.toLowerCase().includes(query.toLowerCase())
     );
 
-    displaySearchResults(filteredSongs);
+    // Remove duplicates based on song title or file
+    const uniqueSongs = [];
+    filteredSongs.forEach(song => {
+        if (!uniqueSongs.some(existingSong => existingSong.file === song.file)) {
+            uniqueSongs.push(song);
+        }
+    });
+
+    displaySearchResults(uniqueSongs); // Display filtered results
 }
 
 // Function to display search results as cards
@@ -467,7 +476,7 @@ function removeSearchResult(card) {
 searchBox.addEventListener("input", (e) => {
     const query = e.target.value.trim();
     if (query) {
-        filterSongs(query);
+        filterSongs(query); // Call filter function with search query
     } else {
         resetSearch(); // Clear input and results when input is empty
     }
