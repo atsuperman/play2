@@ -68,6 +68,19 @@
             transform: scale(1.2);
         }
 
+        #searchBoxContainer {
+            display: none;
+            transition: width 0.3s ease;
+        }
+
+        #searchBox {
+            width: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            box-sizing: border-box;
+        }
     
 #switch {
     cursor: pointer;
@@ -101,7 +114,6 @@
   
    #searchResults {
     position: absolute; /* Ensure it floats relative to the container */
-    bottom: 0;
     top: -310px; /* Adjust based on the height of the results and spacing */
     left: 0;
     width: 100%;
