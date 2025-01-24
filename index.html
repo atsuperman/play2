@@ -427,7 +427,7 @@ function displaySearchResults(results) {
             addButton.classList.add("add-button");
             addButton.textContent = "Add to current list";
             addButton.onclick = () => {
-                addSongToCurrentList(song);  // Add the song and update next song
+                addSongToCurrentList(song);  // Add the song and update the next song
                 removeSearchResult(resultCard);
             };
 
@@ -446,7 +446,7 @@ function displaySearchResults(results) {
 function addSongToCurrentList(song) {
     alert(`Added "${song.file.replace(".mp3", "").replace(/_/g, " ")}" to the current playlist`);
 
-    // Update the next song in the playlist
+    // Logic to handle updating the next song
     currentSongIndex++;
     if (currentSongIndex >= allSongs.length) {
         shuffleSongs();  // Shuffle the playlist if we reach the end
