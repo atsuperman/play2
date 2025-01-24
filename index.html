@@ -1,4 +1,4 @@
-   <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -113,8 +113,9 @@
 }
   
    #searchResults {
-    position: absolute;
-    bottom: -10; /* Aligns the results to the bottom */
+    position: absolute; /* Ensure it floats relative to the container */
+       bottom: 0;
+    top: -310px; /* Adjust based on the height of the results and spacing */
     left: 0;
     width: 100%;
     z-index: 1000;
