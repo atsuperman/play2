@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -113,11 +113,10 @@
 }
   
    #searchResults {
-    position: absolute; /* Ensure it floats relative to the container */
-    top: -310px; /* Adjust based on the height of the results and spacing */
-    left: 0;
-    width: 100%;
-    z-index: 1000;
+    max-height: 300px; /* Set maximum height */
+    overflow-y: auto; /* Enable vertical scrolling if the content exceeds max-height */
+    position: absolute; /* Or relative, depending on your layout */
+    width: 100%; /* Ensure it takes full width */
 }
 
 #searchBoxContainer {
