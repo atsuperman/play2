@@ -1,4 +1,4 @@
-   <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -445,7 +445,7 @@ function displaySearchResults(results) {
 
             resultCard.appendChild(resultText);
             resultCard.appendChild(addButton);
-            searchResultsContainer.appendChild(resultCard);
+            searchResultsContainer.insertBefore(resultCard, searchResultsContainer.firstChild);
         });
 
         searchResultsContainer.style.display = "block"; // Show the results container
