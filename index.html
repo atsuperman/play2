@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -68,9 +68,10 @@
             transform: scale(1.2);
         }
 
-      #searchBoxContainer {
-    position: relative; /* Anchors the results to the container */
-}
+        #searchBoxContainer {
+            display: none;
+            transition: width 0.3s ease;
+        }
 
         #searchBox {
             width: 200px;
@@ -111,20 +112,15 @@
     background: #aaa;
 }
   
-   #searchResults {
+    #searchResults {
     display: none;
-    position: absolute;
-    bottom: 100%; /* Makes the container expand upwards */
-    left: 0;
-    width: 100%; /* Matches the width of the search box */
+    margin-top: 10px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     background: #f9f9f9;
     max-height: 300px;
     overflow-y: auto;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    z-index: 10; /* Ensures it appears above other elements */
 }
 
 .search-result-card {
