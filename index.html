@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -429,9 +429,15 @@ function displaySearchResults(results) {
     searchResultsContainer.innerHTML = ""; // Clear previous results
     if (results.length > 0) {
         results.reverse().forEach(song => {
-            const resultCard = document.createElement("div");
-            resultCard.classList.add("search-result-card");
+            // Assuming there is a container for search results
+const searchContainer = document.querySelector(".search-container");
 
+// Create the result card
+const resultCard = document.createElement("div");
+resultCard.classList.add("search-result-card");
+
+// Append the result card to the search container
+searchContainer.appendChild(resultCard);
             const resultText = document.createElement("div");
             resultText.classList.add("result-text");
             resultText.textContent = `${song.file.replace(".mp3", "").replace(/_/g, " ")} - ${song.details}`;
