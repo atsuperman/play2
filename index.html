@@ -68,19 +68,6 @@
             transform: scale(1.2);
         }
 
-        #searchBoxContainer {
-            display: none;
-            transition: width 0.3s ease;
-        }
-
-        #searchBox {
-            width: 200px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            outline: none;
-            box-sizing: border-box;
-        }
     
 #switch {
     cursor: pointer;
@@ -121,6 +108,13 @@
     z-index: 1000;
 }
 
+#searchBoxContainer {
+    position: relative; /* Needed for absolute positioning of searchResults */
+}
+
+.search-container {
+    position: relative; /* Ensure relative positioning for proper alignment */
+}
 
 .search-result-card {
     display: flex;
