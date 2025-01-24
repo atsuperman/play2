@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -112,13 +112,18 @@
     background: #aaa;
 }
   
-    #searchResults {
-    position: absolute; /* Ensure it floats relative to the container */
-    bottom: 0;
-    top: -310px; /* Adjust based on the height of the results and spacing */
-    left: 0;
-    width: 100%;
-    z-index: 100;
+   /* Assuming .search-results is the class for the search results container */
+.search-results {
+    position: absolute; /* Use absolute positioning */
+    bottom: 100%; /* Position it above the container */
+    left: 0; /* Align it with the left edge of the parent container */
+    width: 100%; /* Ensure it spans the full width */
+    z-index: 10; /* Make sure it appears above the container */
+}
+
+/* Optional: Adjust any margin or padding if necessary to fine-tune positioning */
+.a-container {
+    position: relative; /* Make sure this is positioned relative so the search-results positioning works */
 }
 
 #searchBoxContainer {
