@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -345,6 +345,7 @@ const otherIcons = Array.from(document.querySelectorAll(".icon")).filter(
 );
 
 let searchTimeout; // Timeout for auto-hide
+let currentSongIndex = 0;  // Keep track of the current song index in the playlist
 
 // Reference to the search results container
 const searchResultsContainer = document.getElementById("searchResults");
@@ -426,7 +427,7 @@ function displaySearchResults(results) {
             addButton.classList.add("add-button");
             addButton.textContent = "Add to current list";
             addButton.onclick = () => {
-                addSongToCurrentList(song);
+                addSongToCurrentList(song);  // Add the song and update next song
                 removeSearchResult(resultCard);
             };
 
@@ -441,9 +442,17 @@ function displaySearchResults(results) {
     }
 }
 
-// Function to add the chosen song to the current playlist
+// Function to add the chosen song to the current playlist and update the next song
 function addSongToCurrentList(song) {
     alert(`Added "${song.file.replace(".mp3", "").replace(/_/g, " ")}" to the current playlist`);
+
+    // Update the next song in the playlist
+    currentSongIndex++;
+    if (currentSongIndex >= allSongs.length) {
+        shuffleSongs();  // Shuffle the playlist if we reach the end
+        currentSongIndex = 0;  // Restart from the first song
+    }
+    loadCurrentSong();  // Load the next song in the playlist
 }
 
 // Function to remove a search result after selecting it
