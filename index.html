@@ -187,6 +187,10 @@
     <div class="vertical-line"></div>
     <!-- A-container for Play/Pause toggle -->
    <div class="a-container">
+       
+    <div id="searchResults" style="display: none; margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9; max-height: 300px; overflow-y: auto;">
+        <!-- Search result cards will be added here -->
+    </div>
        <div class="icon-row">
     <span class="icon" id="play-pause">
         <svg width="24" height="24" viewBox="0 0 24 24">
@@ -216,10 +220,7 @@
     </svg>
 </span>
            <div id="searchBoxContainer">
-    <!-- Moved searchResults above the input box -->
-    <div id="searchResults" style="display: none; margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9; max-height: 300px; overflow-y: auto;">
-        <!-- Search result cards will be added here -->
-    </div>
+
     <input type="text" id="searchBox" placeholder="Search songs..." />
 </div>
     </div>
