@@ -455,6 +455,7 @@ searchBox.addEventListener("input", (e) => {
     if (query) {
         filterSongs(query);
     } else {
+        searchResultsContainer.innerHTML = ""; // Clear any existing results
         searchResultsContainer.style.display = "none"; // Hide results when input is empty
     }
 });
