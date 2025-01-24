@@ -354,7 +354,7 @@ searchIcon.addEventListener("click", () => {
     if (searchBoxContainer.style.display === "none" || !searchBoxContainer.style.display) {
         // Show search box
         searchBoxContainer.style.display = "block";
-        searchBox.value = ""; // Reset the input box
+        resetSearch(); // Reset input and results
 
         // Hide other icons
         otherIcons.forEach(icon => {
@@ -369,10 +369,17 @@ searchIcon.addEventListener("click", () => {
     }
 });
 
+// Function to reset the search box and results
+function resetSearch() {
+    searchBox.value = ""; // Clear the input field
+    searchResultsContainer.innerHTML = ""; // Clear search results
+    searchResultsContainer.style.display = "none"; // Hide the results container
+}
+
 // Function to hide the search box
 function hideSearchBox() {
     searchBoxContainer.style.display = "none";
-    searchBox.value = ""; // Reset the input box
+    resetSearch(); // Reset input and results
 
     // Show other icons
     otherIcons.forEach(icon => {
@@ -436,14 +443,12 @@ function displaySearchResults(results) {
 
 // Function to add the chosen song to the current playlist
 function addSongToCurrentList(song) {
-    // You can modify the way the song is added to the current list as per your need
     alert(`Added "${song.file.replace(".mp3", "").replace(/_/g, " ")}" to the current playlist`);
 }
 
 // Function to remove a search result after selecting it
 function removeSearchResult(card) {
     card.remove();
-    // Optionally, you can hide the results container if no items are left
     if (searchResultsContainer.children.length === 0) {
         searchResultsContainer.style.display = "none";
     }
@@ -455,8 +460,7 @@ searchBox.addEventListener("input", (e) => {
     if (query) {
         filterSongs(query);
     } else {
-        searchResultsContainer.innerHTML = ""; // Clear any existing results
-        searchResultsContainer.style.display = "none"; // Hide results when input is empty
+        resetSearch(); // Clear input and results when input is empty
     }
 });
     
