@@ -81,10 +81,6 @@
             outline: none;
             box-sizing: border-box;
         }
-    .icon.search-active {
-    margin-left: auto; /* Push it to the right */
-}
-    
     
 #switch {
     cursor: pointer;
@@ -116,18 +112,13 @@
     background: #aaa;
 }
   
-   /* Assuming .search-results is the class for the search results container */
-.search-results {
-    position: absolute; /* Use absolute positioning */
-    bottom: 100%; /* Position it above the container */
-    left: 0; /* Align it with the left edge of the parent container */
-    width: 100%; /* Ensure it spans the full width */
-    z-index: 10; /* Make sure it appears above the container */
-}
-
-/* Optional: Adjust any margin or padding if necessary to fine-tune positioning */
-.a-container {
-    position: relative; /* Make sure this is positioned relative so the search-results positioning works */
+    #searchResults {
+    position: absolute; /* Ensure it floats relative to the container */
+    bottom: 0;
+    top: -310px; /* Adjust based on the height of the results and spacing */
+    left: 0;
+    width: 100%;
+    z-index: 100;
 }
 
 #searchBoxContainer {
@@ -224,7 +215,13 @@
         <circle id="toggle" cx="6" cy="12" r="6" fill="#000000"/>
     </svg>
 </span>
-       
+           <div id="searchBoxContainer">
+    <!-- Moved searchResults above the input box -->
+    <div id="searchResults" style="display: none; margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9; max-height: 300px; overflow-y: auto;">
+        <!-- Search result cards will be added here -->
+    </div>
+    <input type="text" id="searchBox" placeholder="Search songs..." />
+</div>
        </div>
    </div>
     <!-- B-container left empty -->
@@ -383,8 +380,6 @@ function resetSearch() {
     searchResultsContainer.innerHTML = ""; // Clear search results
     searchResultsContainer.style.display = "none"; // Hide the results container
 }
-    searchIcon.classList.add("search-active"); // Move icon right
-searchIcon.classList.remove("search-active"); // Revert position
 
 // Function to hide the search box
 function hideSearchBox() {
