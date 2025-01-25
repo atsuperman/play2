@@ -81,6 +81,10 @@
             outline: none;
             box-sizing: border-box;
         }
+    .icon.search-active {
+    margin-left: auto; /* Push it to the right */
+}
+    
     
 #switch {
     cursor: pointer;
@@ -385,6 +389,8 @@ function resetSearch() {
     searchResultsContainer.innerHTML = ""; // Clear search results
     searchResultsContainer.style.display = "none"; // Hide the results container
 }
+    searchIcon.classList.add("search-active"); // Move icon right
+searchIcon.classList.remove("search-active"); // Revert position
 
 // Function to hide the search box
 function hideSearchBox() {
