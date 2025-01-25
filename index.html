@@ -1,4 +1,4 @@
-   <!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -165,6 +165,33 @@
 .search-result-card .add-button:hover {
     background-color: #0056b3;
 }
+  
+.c-container {
+  border: 2px solid #ccc;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin: 20px 0;
+  background-color: #f9f9f9;
+}
+
+.c-container h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.c-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.c-container li {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+}
+  
     
         @media screen and (max-width: 768px) {
             .a-container, .b-container {
@@ -184,6 +211,12 @@
     </style>
 </head>
 <body>
+  <div class="c-container" id="c-container" style="display: none;">
+  <h2>Search Results</h2>
+  <ul id="search-results">
+    <!-- Search results will be dynamically inserted here -->
+  </ul>
+</div>
     <div class="vertical-line"></div>
     <!-- A-container for Play/Pause toggle -->
    <div class="a-container">
@@ -354,6 +387,10 @@ let searchTimeout; // Timeout for auto-hide
 // Reference to the search results container
 const searchResultsContainer = document.getElementById("searchResults");
 
+// Reference to the C-container for search results
+const cContainer = document.getElementById("c-container");
+const cSearchResults = document.getElementById("c-search-results");
+
 // Toggle search functionality
 searchIcon.addEventListener("click", () => {
     if (searchBoxContainer.style.display === "none" || !searchBoxContainer.style.display) {
@@ -377,8 +414,8 @@ searchIcon.addEventListener("click", () => {
 // Function to reset the search box and results
 function resetSearch() {
     searchBox.value = ""; // Clear the input field
-    searchResultsContainer.innerHTML = ""; // Clear search results
-    searchResultsContainer.style.display = "none"; // Hide the results container
+    cSearchResults.innerHTML = ""; // Clear search results in C-container
+    cContainer.style.display = "none"; // Hide the C-container
 }
 
 // Function to hide the search box
@@ -424,34 +461,21 @@ function filterSongs(query) {
     displaySearchResults(uniqueSongs); // Display filtered results
 }
 
-// Function to display search results as cards
+// Function to display search results in the C-container
 function displaySearchResults(results) {
-    searchResultsContainer.innerHTML = ""; // Clear previous results
+    cSearchResults.innerHTML = ""; // Clear previous results
     if (results.length > 0) {
-        results.reverse().forEach(song => {
-            const resultCard = document.createElement("div");
-            resultCard.classList.add("search-result-card");
-
-            const resultText = document.createElement("div");
-            resultText.classList.add("result-text");
-            resultText.textContent = `${song.file.replace(".mp3", "").replace(/_/g, " ")} - ${song.details}`;
-
-            const addButton = document.createElement("button");
-            addButton.classList.add("add-button");
-            addButton.textContent = "Add to current list";
-            addButton.onclick = () => {
-                addSongToCurrentList(song);
-                removeSearchResult(resultCard);
-            };
-
-            resultCard.appendChild(resultText);
-            resultCard.appendChild(addButton);
-            searchResultsContainer.insertBefore(resultCard, searchResultsContainer.firstChild);
+        results.forEach(song => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `${song.file.replace(".mp3", "").replace(/_/g, " ")} - ${song.details}`;
+            cSearchResults.appendChild(listItem);
         });
 
-        searchResultsContainer.style.display = "block"; // Show the results container
+        // Show the C-container
+        cContainer.style.display = "block";
     } else {
-        searchResultsContainer.style.display = "none"; // Hide if no results
+        // Hide the C-container if no results
+        cContainer.style.display = "none";
     }
 }
 
