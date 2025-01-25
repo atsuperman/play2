@@ -249,10 +249,7 @@
     </svg>
 </span>
            <div id="searchBoxContainer">
-    <!-- Moved searchResults above the input box -->
-    <div id="searchResults" style="display: none; margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9; max-height: 300px; overflow-y: auto;">
-        <!-- Search result cards will be added here -->
-    </div>
+    <!-- Removed the previous searchResults container -->
     <input type="text" id="searchBox" placeholder="Search songs..." />
 </div>
        </div>
@@ -384,8 +381,8 @@ const otherIcons = Array.from(document.querySelectorAll(".icon")).filter(
 
 let searchTimeout; // Timeout for auto-hide
 
-// Reference to the C container for search results
-const cContainer = document.getElementById("cContainer"); // C-container reference
+// Reference to the C-container for search results (update here to use "cContainer")
+const cContainer = document.getElementById("cContainer"); // Correct reference to C-container for results
 
 // Toggle search functionality
 searchIcon.addEventListener("click", () => {
@@ -407,7 +404,7 @@ searchIcon.addEventListener("click", () => {
     }
 });
 
-// Function to reset the search box and results
+// Function to reset the search box and results (affects only cContainer now)
 function resetSearch() {
     searchBox.value = ""; // Clear the input field
     cContainer.innerHTML = ""; // Clear the results in C-container
@@ -454,10 +451,10 @@ function filterSongs(query) {
         }
     });
 
-    displaySearchResults(uniqueSongs); // Display filtered results
+    displaySearchResults(uniqueSongs); // Display filtered results in cContainer
 }
 
-// Function to display search results as cards
+// Function to display search results as cards in cContainer
 function displaySearchResults(results) {
     cContainer.innerHTML = ""; // Clear previous results in C-container
     if (results.length > 0) {
@@ -479,7 +476,7 @@ function displaySearchResults(results) {
 
             resultCard.appendChild(resultText);
             resultCard.appendChild(addButton);
-            cContainer.insertBefore(resultCard, cContainer.firstChild);
+            cContainer.insertBefore(resultCard, cContainer.firstChild); // Add the result card to cContainer
         });
 
         cContainer.style.display = "block"; // Show the C-container when results are available
@@ -502,7 +499,7 @@ function addSongToCurrentList(song) {
 function removeSearchResult(card) {
     card.remove();
     if (cContainer.children.length === 0) {
-        cContainer.style.display = "none";
+        cContainer.style.display = "none"; // Hide C-container if no children remain
     }
 }
 
