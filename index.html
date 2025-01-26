@@ -73,14 +73,7 @@
             transition: width 0.3s ease;
         }
 
-        #searchBox {
-            width: 200px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            outline: none;
-            box-sizing: border-box;
-        }
+  
     
 #switch {
     cursor: pointer;
@@ -112,59 +105,7 @@
     background: #aaa;
 }
   
-    #searchResults {
-    position: absolute; /* Ensure it floats relative to the container */
-    bottom: 0;
-    top: -310px; /* Adjust based on the height of the results and spacing */
-    left: 0;
-    width: 100%;
-    z-index: 100;
-}
-
-#searchBoxContainer {
-    position: relative; /* Needed for absolute positioning of searchResults */
-}
-
-.search-container {
-    position: relative; /* Ensure relative positioning for proper alignment */
-}
-
-.search-result-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
-}
-
-.search-result-card:hover {
-    transform: scale(1.05);
-}
-
-.search-result-card .result-text {
-    font-size: 14px;
-    color: #007BFF;
-    font-weight: bold;
-}
-
-.search-result-card .add-button {
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.search-result-card .add-button:hover {
-    background-color: #0056b3;
-}
+   
   
 .c-container {
   border: 2px solid #ccc;
@@ -372,146 +313,6 @@ document.getElementById("next").addEventListener("click", () => {
     // Shuffle songs on page load
     shuffleSongs();
   
-const searchIcon = document.getElementById("search");
-const searchBoxContainer = document.getElementById("searchBoxContainer");
-const searchBox = document.getElementById("searchBox");
-const otherIcons = Array.from(document.querySelectorAll(".icon")).filter(
-    icon => icon.id !== "search"
-);
-
-let searchTimeout; // Timeout for auto-hide
-
-// Reference to the C-container for search results (update here to use "cContainer")
-const cContainer = document.getElementById("cContainer"); // Correct reference to C-container for results
-
-// Toggle search functionality
-searchIcon.addEventListener("click", () => {
-    if (searchBoxContainer.style.display === "none" || !searchBoxContainer.style.display) {
-        // Show search box
-        searchBoxContainer.style.display = "block";
-        resetSearch(); // Reset input and results
-
-        // Hide other icons
-        otherIcons.forEach(icon => {
-            icon.style.display = "none";
-        });
-
-        // Reset auto-hide timer
-        resetSearchTimeout();
-    } else {
-        // Hide search box and reset input
-        hideSearchBox();
-    }
-});
-
-// Function to reset the search box and results (affects only cContainer now)
-function resetSearch() {
-    searchBox.value = ""; // Clear the input field
-    cContainer.innerHTML = ""; // Clear the results in C-container
-    cContainer.style.display = "none"; // Hide the C-container results
-}
-
-// Function to hide the search box
-function hideSearchBox() {
-    searchBoxContainer.style.display = "none";
-    resetSearch(); // Reset input and results
-
-    // Show other icons
-    otherIcons.forEach(icon => {
-        icon.style.display = "inline-block";
-    });
-}
-
-// Reset the auto-hide timer for the search box
-function resetSearchTimeout() {
-    clearTimeout(searchTimeout); // Clear existing timer
-    searchTimeout = setTimeout(() => {
-        if (!searchBox.value.trim()) { // Hide only if input is empty
-            hideSearchBox();
-        }
-    }, 30000); // 30-second timer
-}
-
-// Reset the timer whenever the user types
-searchBox.addEventListener("input", resetSearchTimeout);
-
-// Function to filter songs based on search input
-function filterSongs(query) {
-    // Filter songs based on the query
-    const filteredSongs = allSongs.filter(song => 
-        song.file.toLowerCase().includes(query.toLowerCase()) || 
-        song.details.toLowerCase().includes(query.toLowerCase())
-    );
-
-    // Remove duplicates based on song title or file
-    const uniqueSongs = [];
-    filteredSongs.forEach(song => {
-        if (!uniqueSongs.some(existingSong => existingSong.file === song.file)) {
-            uniqueSongs.push(song);
-        }
-    });
-
-    displaySearchResults(uniqueSongs); // Display filtered results in cContainer
-}
-
-// Function to display search results as cards in cContainer
-function displaySearchResults(results) {
-    cContainer.innerHTML = ""; // Clear previous results in C-container
-    if (results.length > 0) {
-        results.reverse().forEach(song => {
-            const resultCard = document.createElement("div");
-            resultCard.classList.add("search-result-card");
-
-            const resultText = document.createElement("div");
-            resultText.classList.add("result-text");
-            resultText.textContent = `${song.file.replace(".mp3", "").replace(/_/g, " ")} - ${song.details}`;
-
-            const addButton = document.createElement("button");
-            addButton.classList.add("add-button");
-            addButton.textContent = "Add to current list";
-            addButton.onclick = () => {
-                addSongToCurrentList(song);
-                removeSearchResult(resultCard);
-            };
-
-            resultCard.appendChild(resultText);
-            resultCard.appendChild(addButton);
-            cContainer.insertBefore(resultCard, cContainer.firstChild); // Add the result card to cContainer
-        });
-
-        cContainer.style.display = "block"; // Show the C-container when results are available
-    } else {
-        cContainer.style.display = "none"; // Hide the C-container if no results
-    }
-}
-
-// Function to add the chosen song to the current playlist and update the next song queue
-function addSongToCurrentList(song) {
-    alert(`Added "${song.file.replace(".mp3", "").replace(/_/g, " ")}" to the current playlist`);
-    
-    // Add the song to the next song queue
-    allSongs.splice(currentSongIndex + 1, 0, song); // Insert it into the queue after the current song
-    
-    updateSongQueue(); // Update the song queue to reflect the change
-}
-
-// Function to remove a search result after selecting it
-function removeSearchResult(card) {
-    card.remove();
-    if (cContainer.children.length === 0) {
-        cContainer.style.display = "none"; // Hide C-container if no children remain
-    }
-}
-
-// Event listener for the search box input
-searchBox.addEventListener("input", (e) => {
-    const query = e.target.value.trim();
-    if (query) {
-        filterSongs(query); // Call filter function with search query
-    } else {
-        resetSearch(); // Clear input and results when input is empty
-    }
-});
     
 let isSwitched = false; // Track the switch position
 
