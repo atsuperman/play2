@@ -334,20 +334,47 @@ const songQueue = document.getElementById("songQueue");
 const songList = document.getElementById("songList");
 let queueTimeout; // Timeout for auto-hide
 
+// Function to create a remove button element
+function createRemoveButton() {
+    const removeButton = document.createElement("button");
+    removeButton.textContent = "Remove";
+    removeButton.classList.add("remove-button");
+    removeButton.addEventListener("click", () => {
+        // Get the index of the song to remove
+        const songDiv = removeButton.parentElement;
+        const songIndex = Array.from(songList.children).indexOf(songDiv);
+        // Adjust for the current song index
+        const actualIndex = currentSongIndex + songIndex + 1;
+
+        // Remove the song from the all_songs array (assuming you have this function)
+        remove_song_from_queue(actualIndex);
+
+        // Remove the song from the UI
+        songList.removeChild(songDiv);
+
+        // Update the remaining queue
+        updateSongQueue();
+    });
+    return removeButton;
+}
+
+// Modified updateSongQueue function to include remove buttons
 function updateSongQueue() {
     songList.innerHTML = ""; // Clear the existing queue
 
-    // Get the next 100 songs (from the current index onwards)
     const queue = allSongs.slice(currentSongIndex + 1, currentSongIndex + 101);
 
-    // Display up to 7 songs at a time
     queue.slice(0, 7).forEach((song) => {
         const songDiv = document.createElement("div");
         songDiv.textContent = `• ${song.file.replace(".mp3", "").replace(/_/g, " ")}`;
         songDiv.style.marginBottom = "5px";
         songDiv.style.color = "#007BFF";
-        songDiv.style.cursor = "default"; // No interaction
         songDiv.style.fontSize = "14px";
+        songDiv.style.display = "flex"; // Add flexbox for horizontal layout
+        songDiv.style.justifyContent = "space-between"; // Align remove button to the right
+
+        const removeButton = createRemoveButton();
+        songDiv.appendChild(removeButton);
 
         songList.appendChild(songDiv);
     });
