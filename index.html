@@ -344,7 +344,7 @@ function createRemoveButton() {
         const songDiv = removeButton.parentElement;
         const songIndex = Array.from(songList.children).indexOf(songDiv);
         // Adjust for the current song index
-        const actualIndex = currentSongIndex + songIndex + 1;
+        const actualIndex = currentSongIndex + songIndex + 1; 
 
         // Remove the song from the all_songs array (assuming you have this function)
         remove_song_from_queue(actualIndex);
@@ -364,7 +364,7 @@ function updateSongQueue() {
 
     const queue = allSongs.slice(currentSongIndex + 1, currentSongIndex + 101);
 
-    queue.slice(0, 7).forEach((song) => {
+    queue.slice(0, 7).forEach((song, index) => { 
         const songDiv = document.createElement("div");
         songDiv.textContent = `• ${song.file.replace(".mp3", "").replace(/_/g, " ")}`;
         songDiv.style.marginBottom = "5px";
