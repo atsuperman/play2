@@ -1,4 +1,5 @@
-    <!DOCTYPE html>
+ 
+   <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -74,6 +75,9 @@
         }
 
   
+.back-icon {
+  margin-left: auto; /* Push this icon to the right side */
+}
     
 #switch {
     cursor: pointer;
@@ -104,35 +108,146 @@
 #songList::-webkit-scrollbar-thumb:hover {
     background: #aaa;
 }
-  
-   
-  
-.c-container {
-  border: 2px solid #ccc;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  margin: 20px 0;
-  background-color: #f9f9f9;
+    
+    /* Add to your existing CSS */
+.song-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-.c-container h2 {
-  font-size: 18px;
-  color: #333;
-  margin-bottom: 15px;
+.song-text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.c-container ul {
-  list-style: none;
-  padding: 0;
-}
-
-.c-container li {
-  font-size: 16px;
-  color: #555;
-  margin-bottom: 10px;
+.remove-button {
+    flex-shrink: 0;
+    /* Keep your existing remove-button styles */
 }
   
+   .remove-button {
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.remove-button:hover {
+    background: #cc0000;
+}
+    
+/* Each search result fits perfectly inside #c-container */
+.search-result-item {
+    position: relative;
+    width: 100%; /* Ensures full width inside #c-container */
+    height: 50px;
+    perspective: 1000px;
+    cursor: pointer;
+    display: flex;
+    align-items: left;
+    justify-content: flex-start; /* Align text to the left */
+    margin-bottom: 5px; /* Space between results */
+}
+
+/* Flip container inside each result */
+.search-result-item .flip-container {
+    position: relative;
+    width: 90%;
+    height: 100%;
+    transition: transform 1.6s ease-in-out;
+    transform-style: preserve-3d;
+}
+
+/* Front and back sides */
+.search-result-item .front,
+.search-result-item .back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Front (default view) */
+.search-result-item .front {
+    background: #d9d9d9;
+    color: black;
+    overflow: hidden;
+}
+
+/* Back (flip effect) */
+.search-result-item .back {
+    background: #28a745;
+    color: white;
+    font-weight: bold;
+    transform: rotateY(180deg);
+    display: flex;
+    align-items: center;
+}
+
+/* Flip effect when clicked */
+.search-result-item.flipped .flip-container {
+    transform: rotateY(180deg);
+}
+
+/* Song title (single line with ellipsis) */
+.song-title {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+/* Song details (single line with ellipsis) */
+.song-details {
+    font-size: 12px;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+    
+.song-name, .song-details {
+    white-space: nowrap;         /* Prevent text wrapping */
+    overflow: hidden;            /* Hide overflowed text */
+    text-overflow: ellipsis;     /* Add ellipsis for overflowed text */
+    width: 100%;                 /* Ensure it fills the container */
+    display: block;              /* Force the text to be displayed in a block */
+    padding: 2px 0;              /* Add some padding between lines */
+}
+
+/* Container to limit size and allow scrolling if necessary */
+#c-container {
+    margin-left: 6%;
+            padding: 10px;
+            border: 2px solid #555;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-sizing: border-box;
+            box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.5),
+                        5px -5px 15px rgba(50, 255, 50, 0.2);
+        }
+
     
         @media screen and (max-width: 768px) {
             .a-container, .b-container {
@@ -173,6 +288,7 @@
         <path d="M4 4v16l12-8-12-8zm14 0h2v16h-2z"></path>
     </svg>
 </span>
+          
 <span class="icon" id="search">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="#000000">
         <path d="M21.71 20.29l-5.37-5.37A7.92 7.92 0 0 0 18 10a8 8 0 1 0-8 8 7.92 7.92 0 0 0 4.92-1.66l5.37 5.37a1 1 0 0 0 1.42-1.42ZM10 16a6 6 0 1 1 6-6 6 6 0 0 1-6 6Z"></path>
@@ -189,11 +305,18 @@
         <circle id="toggle" cx="6" cy="12" r="6" fill="#000000"/>
     </svg>
 </span>
-           <div id="searchBoxContainer">
+         <div id="searchBoxContainer">
     <!-- Removed the previous searchResults container -->
     <input type="text" id="searchBox" placeholder="Search songs..." />
 </div>
+            <div id="back" class="icon">
+    <!-- Back Icon -->
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <path d="M20 11H7.41l5.29-5.29-1.42-1.42L3.71 12l7.96 7.96 1.42-1.42L7.41 13H20v-2z"/>
+</svg>
+  </div>
        </div>
+       
    </div>
     <!-- B-container left empty -->
 <div class="b-container">
@@ -225,205 +348,272 @@
 
  <script type="module">
     import { allSongs } from './audioFiles.js';
+let isListVisible = false;
+let isSearchVisible = false;
+let currentIndex = -1;
+let playlist = [];
+let originalSongs = [...allSongs];
 
-let isPlaying = false;  // Track if the song is currently playing
-    let currentSongIndex = 0; // Track the current song
-    const audioPlayer = document.getElementById("audioPlayer");
-    const playPath = document.getElementById("play-path");
-    const pausePath = document.getElementById("pause-path");
-    const currentSongDisplay = document.getElementById("currentSong");
+// Function to shuffle array
+function shuffleArray(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
 
-    // Shuffle the playlist
-    function shuffleSongs() {
-        for (let i = allSongs.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [allSongs[i], allSongs[j]] = [allSongs[j], allSongs[i]];
-        }
+// Function to update playlist UI live
+// Function to update playlist display with max 7 songs and scrolling
+function updatePlaylist() {
+    let songListContainer = document.getElementById('songList');
+    songListContainer.innerHTML = "";
+
+    playlist.forEach((song, index) => {
+        let songItem = document.createElement('div');
+        songItem.classList.add('song-item');
+
+        let songText = document.createElement('span');
+        songText.classList.add('song-text');
+        songText.textContent = song.file;
+
+        let removeBtn = document.createElement('button');
+        removeBtn.classList.add('remove-button');
+        removeBtn.textContent = "X";
+        removeBtn.onclick = () => {
+            playlist.splice(index, 1);
+            updatePlaylist();
+        };
+
+        songItem.appendChild(songText);
+        songItem.appendChild(removeBtn);
+        songListContainer.appendChild(songItem);
+    });
+
+    // Apply max height for scroll effect
+    songListContainer.style.maxHeight = "200px"; // Adjust height as needed
+    songListContainer.style.overflowY = "auto"; // Enable vertical scroll
+}
+
+// Function to play a song
+function playSong(index) {
+    let audioPlayer = document.getElementById('audioPlayer');
+    let playPath = document.getElementById('play-path');
+    let pausePath = document.getElementById('pause-path');
+
+    if (index >= playlist.length) {
+        playlist = shuffleArray([...originalSongs]); // Reshuffle when all are played
+        updatePlaylist();
+        index = 0;
     }
 
-    // Load the current song
-    function loadCurrentSong() {
-        const song = allSongs[currentSongIndex];
-        audioPlayer.src = song.path;
-        const currentSongName = song.file.replace(".mp3", "").replace(/_/g, " ");
-        document.getElementById("currentSongName").textContent = currentSongName;
-        document.getElementById("songDetails").textContent = song.details;
-    }
+    currentIndex = index;
+    let song = playlist[currentIndex];
 
-    // Start playback of the current song
-    function playCurrentSong() {
+    audioPlayer.src = song.path;
+    document.getElementById('currentSongName').textContent = song.file;
+    document.getElementById('songDetails').textContent = song.details;
+    audioPlayer.play();
+
+    // Remove the song immediately after playing
+    playlist.splice(currentIndex, 1);
+    updatePlaylist();
+
+    playPath.style.display = "none";
+    pausePath.style.display = "block";
+}
+
+// Auto-play next song when current ends
+document.getElementById('audioPlayer').addEventListener('ended', () => {
+    if (playlist.length > 0) {
+        playSong(0);
+    } else {
+        playlist = shuffleArray([...originalSongs]); // Reshuffle for a new order
+        updatePlaylist();
+        playSong(0);
+    }
+});
+
+// Function to handle play/pause button with icon toggle
+document.getElementById('play-pause').addEventListener('click', () => {
+    let audioPlayer = document.getElementById('audioPlayer');
+    let playPath = document.getElementById('play-path');
+    let pausePath = document.getElementById('pause-path');
+
+    if (audioPlayer.paused && currentIndex !== -1) {
         audioPlayer.play();
+    } else if (!audioPlayer.paused) {
+        audioPlayer.pause();
+    } else {
+        playSong(0);
+    }
+
+    updatePlayPauseIcon();
+});
+
+// Ensure the play/pause icon updates when audio plays or pauses
+audioPlayer.addEventListener('play', updatePlayPauseIcon);
+audioPlayer.addEventListener('pause', updatePlayPauseIcon);
+audioPlayer.addEventListener('ended', updatePlayPauseIcon);
+
+// Function to update play/pause icon
+function updatePlayPauseIcon() {
+    let audioPlayer = document.getElementById('audioPlayer');
+    let playPath = document.getElementById('play-path');
+    let pausePath = document.getElementById('pause-path');
+
+    if (audioPlayer.paused) {
+        playPath.style.display = "block";
+        pausePath.style.display = "none";
+    } else {
         playPath.style.display = "none";
         pausePath.style.display = "block";
     }
-
-    // Pause playback
-    function pauseCurrentSong() {
-        audioPlayer.pause();
-        playPath.style.display = "block";
-        pausePath.style.display = "none";
-    }
-
-    // Toggle Play/Pause
-function togglePlayPause() {
-    if (audioPlayer.paused) {
-        playCurrentSong();
-        isPlaying = true;  // Mark as playing
-    } else {
-        pauseCurrentSong();
-        isPlaying = false;  // Mark as paused
-    }
 }
-
-// Event listener for the Next button
-document.getElementById("next").addEventListener("click", () => {
-    if (isPlaying) {
-        playNextSong();  // Play next song only if already playing
+// Function to play the next song (removes current and updates instantly)
+document.getElementById('next').addEventListener('click', () => {
+    if (playlist.length > 0) {
+        playSong(0);
     } else {
-        currentSongIndex++; // Just move to the next song, but don't play yet
-        if (currentSongIndex >= allSongs.length) {
-            shuffleSongs();  // Shuffle the playlist again
-            currentSongIndex = 0;  // Restart from the first song
-        }
-        loadCurrentSong();  // Load the next song details
+        playlist = shuffleArray([...originalSongs]); // Reshuffle if finished
+        updatePlaylist();
+        playSong(0);
     }
 });
 
-    // Advance to the next song
-    function playNextSong() {
-        currentSongIndex++;
-        if (currentSongIndex >= allSongs.length) {
-            shuffleSongs(); // Shuffle the playlist again
-            currentSongIndex = 0; // Restart from the first song
-        }
-        loadCurrentSong();
-        playCurrentSong();
-    }
+// Toggle song list - Do not refresh playlist
+document.getElementById('list').addEventListener('click', () => {
+    isListVisible = !isListVisible;
+    document.getElementById('songQueue').style.display = isListVisible ? 'block' : 'none';
 
-    // Event listener for the Play/Pause toggle
-    document.getElementById("play-pause").addEventListener("click", () => {
-        if (!audioPlayer.src) {
-            loadCurrentSong(); // Load the first song on initial Play click
-        }
-        togglePlayPause();
-    });
-
-    // Automatically play the next song when the current one ends
-    audioPlayer.addEventListener("ended", playNextSong);
-
-    // Shuffle songs on page load
-    shuffleSongs();
-  
+    // Do not refresh or shuffle the playlist on toggle
+});
     
-let isSwitched = false; // Track the switch position
+// Toggle search box and retain selected songs
+let autoHideTimer; // Variable to store the timeout
 
-document.getElementById("switch").addEventListener("click", () => {
-    const toggle = document.getElementById("toggle");
-    
-    if (isSwitched) {
-        toggle.setAttribute("cx", "6"); // Move toggle to the left
+document.getElementById('search').addEventListener('click', () => {
+    isSearchVisible = !isSearchVisible;
+
+    let searchBox = document.getElementById('searchBoxContainer');
+    let icons = document.querySelectorAll('.icon:not(#search):not(#back)'); // Hide all icons except search and back
+    let backIcon = document.getElementById('back');
+
+    if (isSearchVisible) {
+        searchBox.style.display = 'block';
+        document.getElementById('c-container').style.display = 'block';
+        icons.forEach(icon => icon.style.display = 'none'); // Hide other icons
+        if (backIcon) {
+            backIcon.style.display = 'inline-block'; // Ensure back icon is always visible
+            backIcon.style.visibility = 'visible'; // Ensure it's not hidden by CSS
+        }
+        resetAutoHideTimer(); // Start/reset auto-hide timer
     } else {
-        toggle.setAttribute("cx", "44"); // Move toggle to the right
+        hideSearchBox(); // Hide search box and show icons
     }
+});
+
+// Function to hide the search box and show icons
+function hideSearchBox() {
+    let searchBox = document.getElementById('searchBoxContainer');
+    let icons = document.querySelectorAll('.icon:not(#search):not(#back)'); // Show all except back
+    let backIcon = document.getElementById('back');
+
+    searchBox.style.display = 'none';
+    document.getElementById('c-container').style.display = 'none';
+    icons.forEach(icon => icon.style.display = 'inline-block'); // Show icons back
+    if (backIcon) {
+        backIcon.style.display = 'inline-block'; // Ensure back icon is visible
+        backIcon.style.visibility = 'visible'; // Prevent hidden back icon
+    }
+    document.getElementById('search-results').innerHTML = ""; // Only clear results, not playlist
+}
+
+// Function to reset and start the auto-hide timer
+function resetAutoHideTimer() {
+    clearTimeout(autoHideTimer); // Clear any existing timer
+    autoHideTimer = setTimeout(() => {
+        if (isSearchVisible) hideSearchBox(); // Auto-hide if search box is open
+    }, 30000); // 30 seconds delay
+}
+
+// Detect user input or interaction to reset the timer
+document.addEventListener('keydown', resetAutoHideTimer);
+document.addEventListener('mousemove', resetAutoHideTimer);
+document.addEventListener('click', resetAutoHideTimer);
     
-    isSwitched = !isSwitched; // Toggle the state
-});
-  
-// Reference to the song queue container and list
-const songQueue = document.getElementById("songQueue");
-const songList = document.getElementById("songList");
-let queueTimeout; // Timeout for auto-hide
-
-// Function to create a remove button element
-function createRemoveButton() {
-    const removeButton = document.createElement("button");
-    removeButton.textContent = "Remove";
-    removeButton.classList.add("remove-button");
-    removeButton.addEventListener("click", () => {
-        // Get the index of the song to remove
-        const songDiv = removeButton.parentElement;
-        const songIndex = Array.from(songList.children).indexOf(songDiv);
-        // Adjust for the current song index
-        const actualIndex = currentSongIndex + songIndex + 1; 
-
-        // Remove the song from the all_songs array (assuming you have this function)
-        remove_song_from_queue(actualIndex);
-
-        // Remove the song from the UI
-        songList.removeChild(songDiv);
-
-        // Update the remaining queue
-        updateSongQueue();
-    });
-    return removeButton;
-}
-
-// Modified updateSongQueue function to include remove buttons
-function updateSongQueue() {
-    songList.innerHTML = ""; // Clear the existing queue
-
-    const queue = allSongs.slice(currentSongIndex + 1, currentSongIndex + 101);
-
-    queue.slice(0, 7).forEach((song, index) => { 
-        const songDiv = document.createElement("div");
-        songDiv.textContent = `• ${song.file.replace(".mp3", "").replace(/_/g, " ")}`;
-        songDiv.style.marginBottom = "5px";
-        songDiv.style.color = "#007BFF";
-        songDiv.style.fontSize = "14px";
-        songDiv.style.display = "flex"; // Add flexbox for horizontal layout
-        songDiv.style.justifyContent = "space-between"; // Align remove button to the right
-
-        const removeButton = createRemoveButton();
-        songDiv.appendChild(removeButton);
-
-        songList.appendChild(songDiv);
-    });
-}
-
-
-// Function to toggle song queue visibility
-function toggleSongQueue() {
-    if (songQueue.style.display === "none" || !songQueue.style.display) {
-        songQueue.style.display = "block"; // Show the queue
-        updateSongQueue(); // Update the list
-        resetQueueTimeout(); // Reset auto-hide timer
-    } else {
-        songQueue.style.display = "none"; // Hide the queue
+    
+// Search functionality - Ensure chosen song is added at the top of the playlist
+document.getElementById('searchBox').addEventListener('input', (e) => {
+    let query = e.target.value.toLowerCase();
+    let resultsContainer = document.getElementById('search-results');
+    
+    // Clear results if input is empty
+    if (query.length === 0) {
+        resultsContainer.innerHTML = "";
+        return;
     }
-}
 
-// Hide song queue and reset timer
-function hideSongQueue() {
-    songQueue.style.display = "none";
-    clearTimeout(queueTimeout); // Clear auto-hide timer
-}
+    resultsContainer.innerHTML = ""; // Clear previous results
 
-// Auto-hide the queue after 30 seconds of inactivity
-function resetQueueTimeout() {
-    clearTimeout(queueTimeout); // Clear existing timer
-    queueTimeout = setTimeout(hideSongQueue, 30000); // Set 30-second timer
-}
+    if (query.length > 0) {
+        let filteredSongs = allSongs.filter(song => {
+            let songNameWithoutExt = song.file.replace(/(\.[\w\d]+)$/i, "").toLowerCase(); // Remove file extension
+            return songNameWithoutExt.includes(query);
+        });
 
-// Add click event listener to the list icon
-document.getElementById("list").addEventListener("click", toggleSongQueue);
+        let maxResults = 6;
+        let resultsToShow = filteredSongs.slice(0, maxResults);
 
-// Hide song queue if any other icon is clicked
-document.querySelectorAll(".icon").forEach(icon => {
-    if (icon.id !== "list") {
-        icon.addEventListener("click", hideSongQueue);
+        resultsToShow.forEach(song => {
+            let songNameWithoutExt = song.file.replace(/(\.[\w\d]+)$/i, "").replace(/_/g, " ");
+
+            let listItem = document.createElement('div');
+            listItem.classList.add('search-result-item');
+
+            let flipContainer = document.createElement('div');
+            flipContainer.classList.add('flip-container');
+
+            let front = document.createElement('div');
+            front.classList.add('front');
+
+            // Create song name element
+            let songName = document.createElement('div');
+            songName.classList.add('song-name');
+            songName.textContent = songNameWithoutExt;
+
+            // Create song details element
+            let songDetails = document.createElement('div');
+            songDetails.classList.add('song-details');
+            songDetails.textContent = song.details || "No details available"; // Show details or fallback text
+
+            front.appendChild(songName);
+            front.appendChild(songDetails);
+
+            let back = document.createElement('div');
+            back.classList.add('back');
+            back.textContent = "Added to playlist ✅";
+
+            flipContainer.appendChild(front);
+            flipContainer.appendChild(back);
+            listItem.appendChild(flipContainer);
+
+            listItem.onclick = () => {
+                let selectedSong = { ...song };
+
+                playlist.unshift(selectedSong);
+                updatePlaylist();
+
+                // Apply flip effect
+                listItem.classList.add('flipped');
+
+                // Wait 5 second, then remove only the selected item
+                setTimeout(() => {
+                    listItem.remove();
+                }, 5000);
+            };
+
+            resultsContainer.appendChild(listItem);
+        });
     }
 });
-// Automatically update the queue when the song changes
-audioPlayer.addEventListener("ended", () => {
-    playNextSong(); // Play the next song
-    updateSongQueue(); // Update the queue dynamically
-});
-
-// Update the queue whenever "Next" is clicked
-document.getElementById("next").addEventListener("click", () => {
-    updateSongQueue(); // Refresh the queue when moving to the next song
-});
-  
+    
     </script>
 </body>
 </html>
