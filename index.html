@@ -1,4 +1,4 @@
- 
+
    <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -147,6 +147,41 @@
 .remove-button:hover {
     background: #cc0000;
 }
+ /* Add to your existing CSS */
+#searchBox {
+    /* Existing styles (add these if missing) */
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid #666;
+    border-radius: 20px;
+    font-size: 14px;
+    background: #fff;
+    transition: all 0.3s ease;
+    
+    /* Blinking cursor styling */
+    caret-color: #j0ff00; /* Neon green cursor color */
+    animation: blink 1s step-end infinite;
+}
+
+/* Blink animation */
+@keyframes blink {
+    0%, 100% { border-color: #666; } /* Original border color */
+    50% { border-color: #00ff00; } /* Blink to neon green */
+}
+
+/* For modern browsers with smooth transition */
+#searchBox:focus {
+    outline: none;
+    border-color: #00ff00;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.3); }
+    70% { box-shadow: 0 0 0 10px rgba(0, 255, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
+}
     
 /* Each search result fits perfectly inside #c-container */
 .search-result-item {
@@ -248,6 +283,16 @@
                         5px -5px 15px rgba(50, 255, 50, 0.2);
         }
 
+.duration-display {
+  margin-left: auto; /* Push to right side */
+  font-size: 11px;
+  color: #666;
+  font-family: 'Roboto Mono', monospace; /* Monospace for time alignment */
+  padding: 1px;
+  background: #f0f0f0;
+  border-radius: 1px;
+}    
+    
     
         @media screen and (max-width: 768px) {
             .a-container, .b-container {
@@ -309,12 +354,10 @@
     <!-- Removed the previous searchResults container -->
     <input type="text" id="searchBox" placeholder="Search songs..." />
 </div>
-            <div id="back" class="icon">
-    <!-- Back Icon -->
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-  <path d="M20 11H7.41l5.29-5.29-1.42-1.42L3.71 12l7.96 7.96 1.42-1.42L7.41 13H20v-2z"/>
-</svg>
-  </div>
+            <!-- Remove this block -->
+<div id="durationDisplay" class="duration-display">
+  0:00 / 0:00
+</div>
        </div>
        
    </div>
@@ -356,8 +399,12 @@ let originalSongs = [...allSongs];
 
 // Function to shuffle array
 function shuffleArray(array) {
-    return array.sort(() => Math.random() - 0.5);
-}
+       for (let i = array.length - 1; i > 0; i--) {
+         const j = Math.floor(Math.random() * (i + 1));
+         [array[i], array[j]] = [array[j], array[i]];
+       }
+       return array;
+     }
 
 // Function to update playlist UI live
 // Function to update playlist display with max 7 songs and scrolling
@@ -451,6 +498,27 @@ document.getElementById('play-pause').addEventListener('click', () => {
 audioPlayer.addEventListener('play', updatePlayPauseIcon);
 audioPlayer.addEventListener('pause', updatePlayPauseIcon);
 audioPlayer.addEventListener('ended', updatePlayPauseIcon);
+    // Inside playSong() function - Add this after audioPlayer.src = song.path:
+audioPlayer.addEventListener('loadedmetadata', () => {
+  const duration = audioPlayer.duration;
+  document.getElementById('durationDisplay').textContent = 
+    `0:00 / ${formatTime(duration)}`;
+});
+
+// Add this new function to format time (MM:SS)
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Add timeupdate listener (outside playSong):
+audioPlayer.addEventListener('timeupdate', () => {
+  const current = audioPlayer.currentTime;
+  const duration = audioPlayer.duration;
+  document.getElementById('durationDisplay').textContent = 
+    `${formatTime(current)} / ${formatTime(duration)}`;
+});
 
 // Function to update play/pause icon
 function updatePlayPauseIcon() {
@@ -492,39 +560,32 @@ document.getElementById('search').addEventListener('click', () => {
     isSearchVisible = !isSearchVisible;
 
     let searchBox = document.getElementById('searchBoxContainer');
-    let icons = document.querySelectorAll('.icon:not(#search):not(#back)'); // Hide all icons except search and back
-    let backIcon = document.getElementById('back');
+    let icons = document.querySelectorAll('.icon:not(#search), #durationDisplay'); // Added duration display
 
     if (isSearchVisible) {
         searchBox.style.display = 'block';
         document.getElementById('c-container').style.display = 'block';
-        icons.forEach(icon => icon.style.display = 'none'); // Hide other icons
-        if (backIcon) {
-            backIcon.style.display = 'inline-block'; // Ensure back icon is always visible
-            backIcon.style.visibility = 'visible'; // Ensure it's not hidden by CSS
-        }
-        resetAutoHideTimer(); // Start/reset auto-hide timer
+        // Hide ALL icons AND duration display
+        icons.forEach(element => element.style.display = 'none');
+        resetAutoHideTimer();
     } else {
-        hideSearchBox(); // Hide search box and show icons
+        hideSearchBox();
     }
 });
 
 // Function to hide the search box and show icons
 function hideSearchBox() {
     let searchBox = document.getElementById('searchBoxContainer');
-    let icons = document.querySelectorAll('.icon:not(#search):not(#back)'); // Show all except back
-    let backIcon = document.getElementById('back');
+    let icons = document.querySelectorAll('.icon:not(#search), #durationDisplay'); // Added duration display
 
     searchBox.style.display = 'none';
     document.getElementById('c-container').style.display = 'none';
-    icons.forEach(icon => icon.style.display = 'inline-block'); // Show icons back
-    if (backIcon) {
-        backIcon.style.display = 'inline-block'; // Ensure back icon is visible
-        backIcon.style.visibility = 'visible'; // Prevent hidden back icon
-    }
-    document.getElementById('search-results').innerHTML = ""; // Only clear results, not playlist
+    // Show all icons AND duration display
+    icons.forEach(element => element.style.display = 'inline-block');
+    document.getElementById('search-results').innerHTML = "";
 }
 
+// Rest of the code remains unchanged...
 // Function to reset and start the auto-hide timer
 function resetAutoHideTimer() {
     clearTimeout(autoHideTimer); // Clear any existing timer
@@ -613,6 +674,14 @@ document.getElementById('searchBox').addEventListener('input', (e) => {
         });
     }
 });
+    
+    audioPlayer.addEventListener('error', (e) => {
+       console.error('Audio error:', audioPlayer.error);
+       playNextSong(); // Auto-skip to next song
+     });
+    
+    
+    
     
     </script>
 </body>
