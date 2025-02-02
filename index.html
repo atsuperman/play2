@@ -1,4 +1,4 @@
-
+ 
    <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,20 +74,8 @@
             transition: width 0.3s ease;
         }
 
-  
-.back-icon {
-  margin-left: auto; /* Push this icon to the right side */
-}
     
-#switch {
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
 
-#toggle {
-    transition: cx 0.3s ease;
-}
-  
   
   #songQueue h4 {
     font-size: 16px;
@@ -122,10 +110,12 @@
 }
 
 .song-text {
-    flex: 1;
-    min-width: 0;
+    color: black;
+    max-width: 70%; 
     overflow: hidden;
     text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .remove-button {
@@ -201,7 +191,7 @@
     position: relative;
     width: 90%;
     height: 100%;
-    transition: transform 1.6s ease-in-out;
+    transition: transform 1.4s ease-in-out;
     transform-style: preserve-3d;
 }
 
@@ -293,6 +283,82 @@
   border-radius: 1px;
 }    
     
+    .song-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.small-play-btn {
+    cursor: pointer;
+    flex-shrink: 0;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+.small-play-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.small-play-btn.playing svg {
+    fill: #00ff00;
+}
+
+.remove-button {
+    margin-left: auto;
+}
+         /* Song details container */
+    #songDetails {
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        max-width: 85%;
+        vertical-align: middle;
+        line-height: 1.4;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    /* Expanded state */
+    #songDetails.expanded {
+        white-space: normal;
+        text-overflow: clip;
+        overflow: visible;
+        display: inline;
+        background: rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+        padding: 2px 6px;
+        border-radius: 3px;
+        word-break: break-word;
+        max-height: none;
+    }
+
+    /* Chevron icon */
+    #songDetails::after {
+        content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='%23007BFF'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+        margin-left: 6px;
+        display: inline-block;
+        vertical-align: middle;
+        filter: drop-shadow(0 0 2px #007BFF);
+        transition: all 0.3s ease;
+    }
+
+    #songDetails.expanded::after {
+        content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='%2300ff00'%3E%3Cpath d='M7 14l5-5 5 5z'/%3E%3C/svg%3E");
+        filter: drop-shadow(0 0 3px #00ff00);
+    }
+
+    /* Ensure parent container maintains layout */
+    .b-container > #currentSong > div:last-child {
+        min-height: 24px;
+        display: flex;
+        align-items: center;
+    }
+
+
     
         @media screen and (max-width: 768px) {
             .a-container, .b-container {
@@ -313,7 +379,7 @@
 </head>
 <body>
   <div class="c-container" id="c-container" style="display: none;">
-  <h2>Search Results</h2>
+  <h4>search Results..</h4>
   <ul id="search-results">
     <!-- Search results will be dynamically inserted here -->
   </ul>
@@ -370,17 +436,16 @@
             </svg>
             <span id="currentSongName" style="font-weight: bold; color: #007BFF;"></span> 
         </div>
-        <div style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        <div style="display: block;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="#555" style="margin-right: 5px;">
                 <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z"></path>
             </svg>
             <span id="songDetails" style="font-size: 14px; color: #007BFF;"></span>
-        
+        </div>
     </div>
-</div>
 
   <div id="songQueue" style="display: none; margin-top: 20px;">
-    <h4 style="margin-bottom: 10px; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Coming Songs</h4>
+    <h4 style="margin-bottom: 10px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Next Up</h4>
     <div id="songList" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; padding: 10px; background: #f9f9f9;">
         </div>
 </div>
@@ -408,6 +473,8 @@ function shuffleArray(array) {
 
 // Function to update playlist UI live
 // Function to update playlist display with max 7 songs and scrolling
+let currentSmallPlayer = null;
+
 function updatePlaylist() {
     let songListContainer = document.getElementById('songList');
     songListContainer.innerHTML = "";
@@ -417,25 +484,125 @@ function updatePlaylist() {
         songItem.classList.add('song-item');
 
         let songText = document.createElement('span');
-        songText.classList.add('song-text');
-        songText.textContent = song.file;
+    songText.classList.add('song-text');
+    
+    // Clean filename: remove extension and underscores
+    const cleanName = song.file
+        .replace(/\.[^.]+$/, '') // Remove any file extension
+        .replace(/_/g, ' ')      // Replace underscores with spaces
+        .replace(/-/g, ' ');     // Optional: Replace hyphens with spaces
+    
+    songText.textContent = cleanName;
 
+
+        // Create play/pause button
+        let playBtn = document.createElement('div');
+        playBtn.classList.add('small-play-btn');
+        playBtn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path class="small-play" d="M8 5v14l11-7z" />
+                <path class="small-pause" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" style="display: none;" />
+            </svg>
+        `;
+
+        // Play/pause handler
+        playBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const audioPlayer = document.getElementById('audioPlayer');
+    
+    // Stop main player and all other small players
+    stopMainPlayer();
+    stopAllSmallPlayers(playBtn); // Modified to keep current player
+
+    // Handle current small player state
+    if (playBtn.audio) {
+        if (playBtn.audio.paused) {
+            // Resume playback
+            playBtn.audio.play();
+            playBtn.classList.add('playing');
+            currentSmallPlayer = playBtn;
+            updateSmallIcons(playBtn, true);
+        } else {
+            // Pause playback
+            playBtn.audio.pause();
+            playBtn.classList.remove('playing');
+            updateSmallIcons(playBtn, false);
+
+        }
+    } else {
+        // Start new playback
+        playBtn.audio = new Audio(song.path);
+        playBtn.audio.play();
+        playBtn.classList.add('playing');
+        currentSmallPlayer = playBtn;
+        updateSmallIcons(playBtn, true);
+
+        // Handle audio end
+        playBtn.audio.addEventListener('ended', () => {
+            playBtn.classList.remove('playing');
+            updateSmallIcons(playBtn, false);
+            playBtn.audio = null;
+            if (playBtn.audio) {
+        playBtn.audio.play();
+        
+        // Update media session for small player
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: song.file.replace('.mp3', ''),
+                artist: song.details || 'Unknown Artist'
+            });
+            
+            navigator.mediaSession.playbackState = 'playing';
+        }
+    }
+
+        });
+    }
+});
+
+// Add these helper functions
+function stopMainPlayer() {
+    const audioPlayer = document.getElementById('audioPlayer');
+    if (!audioPlayer.paused) {
+        audioPlayer.pause();
+        updatePlayPauseIcon();
+    }
+}
+
+function stopAllSmallPlayers(exceptThis = null) {
+    document.querySelectorAll('.small-play-btn').forEach(btn => {
+        if (btn !== exceptThis && btn.audio) {
+            btn.audio.pause();
+            btn.classList.remove('playing');
+            updateSmallIcons(btn, false);
+        }
+    });
+}
+
+function updateSmallIcons(button, isPlaying) {
+    button.querySelector('.small-play').style.display = isPlaying ? 'none' : 'block';
+    button.querySelector('.small-pause').style.display = isPlaying ? 'block' : 'none';
+}
+
+        // Remove button
         let removeBtn = document.createElement('button');
         removeBtn.classList.add('remove-button');
         removeBtn.textContent = "X";
-        removeBtn.onclick = () => {
+        removeBtn.onclick = (e) => {
+            e.stopPropagation();
             playlist.splice(index, 1);
             updatePlaylist();
         };
 
+        // Add elements to DOM
+        songItem.appendChild(playBtn);
         songItem.appendChild(songText);
         songItem.appendChild(removeBtn);
         songListContainer.appendChild(songItem);
     });
 
-    // Apply max height for scroll effect
-    songListContainer.style.maxHeight = "200px"; // Adjust height as needed
-    songListContainer.style.overflowY = "auto"; // Enable vertical scroll
+    songListContainer.style.maxHeight = "200px";
+    songListContainer.style.overflowY = "auto";
 }
 
 // Function to play a song
@@ -454,8 +621,14 @@ function playSong(index) {
     let song = playlist[currentIndex];
 
     audioPlayer.src = song.path;
-    document.getElementById('currentSongName').textContent = song.file;
-    document.getElementById('songDetails').textContent = song.details;
+    // Clean up song name display (remove .mp3 extension)
+    const cleanSongName = song.file.replace(/\.mp3$/i, '').replace(/_/g, ' ');
+    document.getElementById('currentSongName').textContent = cleanSongName;
+    
+    // Format details with fallback
+    const details = song.details || "Unknown Artist - Unknown Album";
+    document.getElementById('songDetails').textContent = details;
+
     audioPlayer.play();
 
     // Remove the song immediately after playing
@@ -464,6 +637,36 @@ function playSong(index) {
 
     playPath.style.display = "none";
     pausePath.style.display = "block";
+    
+        // Update media session metadata
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: song.file.replace('.mp3', ''),
+            artist: song.details || 'Unknown Artist',
+            // artwork: [{ src: 'album-art.jpg', sizes: '96x96', type: 'image/jpeg' }]
+        });
+
+        // Set media session actions
+        navigator.mediaSession.setActionHandler('play', () => {
+            audioPlayer.play();
+            updatePlayPauseIcon();
+        });
+
+        navigator.mediaSession.setActionHandler('pause', () => {
+            audioPlayer.pause();
+            updatePlayPauseIcon();
+        });
+
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+            document.getElementById('next').click();
+        });
+
+        // Limit shown controls
+        navigator.mediaSession.setPositionState(null); // Remove progress bar
+        navigator.mediaSession.playbackState = 'playing';
+    }
+
+
 }
 
 // Auto-play next song when current ends
@@ -477,12 +680,23 @@ document.getElementById('audioPlayer').addEventListener('ended', () => {
     }
 });
 
-// Function to handle play/pause button with icon toggle
+/// Modified play/pause handler with small player coordination
 document.getElementById('play-pause').addEventListener('click', () => {
-    let audioPlayer = document.getElementById('audioPlayer');
-    let playPath = document.getElementById('play-path');
-    let pausePath = document.getElementById('pause-path');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const playPath = document.getElementById('play-path');
+    const pausePath = document.getElementById('pause-path');
 
+    // New: Pause all small players while keeping original logic
+    document.querySelectorAll('.small-play-btn').forEach(btn => {
+        if (btn.audio && !btn.audio.paused) {
+            btn.audio.pause();
+            btn.classList.remove('playing');
+            btn.querySelector('.small-play').style.display = 'block';
+            btn.querySelector('.small-pause').style.display = 'none';
+        }
+    });
+
+    // Original logic preserved
     if (audioPlayer.paused && currentIndex !== -1) {
         audioPlayer.play();
     } else if (!audioPlayer.paused) {
@@ -493,11 +707,26 @@ document.getElementById('play-pause').addEventListener('click', () => {
 
     updatePlayPauseIcon();
 });
-
 // Ensure the play/pause icon updates when audio plays or pauses
 audioPlayer.addEventListener('play', updatePlayPauseIcon);
 audioPlayer.addEventListener('pause', updatePlayPauseIcon);
 audioPlayer.addEventListener('ended', updatePlayPauseIcon);
+    
+    // Add these audio event listeners
+audioPlayer.addEventListener('play', () => {
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'playing';
+    }
+});
+
+audioPlayer.addEventListener('pause', () => {
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'paused';
+    }
+});
+
+
+    
     // Inside playSong() function - Add this after audioPlayer.src = song.path:
 audioPlayer.addEventListener('loadedmetadata', () => {
   const duration = audioPlayer.duration;
@@ -649,7 +878,7 @@ document.getElementById('searchBox').addEventListener('input', (e) => {
 
             let back = document.createElement('div');
             back.classList.add('back');
-            back.textContent = "Added to playlist ✅";
+            back.textContent = "ADDED to NEXT UP ✔";
 
             flipContainer.appendChild(front);
             flipContainer.appendChild(back);
@@ -664,10 +893,10 @@ document.getElementById('searchBox').addEventListener('input', (e) => {
                 // Apply flip effect
                 listItem.classList.add('flipped');
 
-                // Wait 5 second, then remove only the selected item
+                // Wait 4 second, then remove only the selected item
                 setTimeout(() => {
                     listItem.remove();
-                }, 5000);
+                }, 4000);
             };
 
             resultsContainer.appendChild(listItem);
@@ -681,6 +910,34 @@ document.getElementById('searchBox').addEventListener('input', (e) => {
      });
     
     
+    
+        document.getElementById('songDetails').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const wasExpanded = this.classList.contains('expanded');
+        
+        // Collapse all first
+        this.classList.remove('expanded');
+        
+        // Toggle state after layout update
+        requestAnimationFrame(() => {
+            if (!wasExpanded) {
+                this.classList.add('expanded');
+                // Auto-collapse after 15 seconds
+                setTimeout(() => {
+                    this.classList.remove('expanded');
+                }, 15000);
+            }
+        });
+    });
+
+    // Collapse when clicking elsewhere
+    document.addEventListener('click', function(e) {
+        const details = document.getElementById('songDetails');
+        if (!details.contains(e.target)) {
+            details.classList.remove('expanded');
+        }
+    });
+
     
     
     </script>
